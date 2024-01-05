@@ -39,7 +39,7 @@ def generate_pdf(max_height, max_speed, max_angle_of_attack, displacement, date,
     pdf.cell(w=70, h=10, txt="Max speed: ", ln=0)
     pdf.cell(w=70, h=10, txt=f'{max_speed} m/s', ln=1)
     pdf.cell(w=70, h=10, txt="Max Angle of Attack: ", ln=0)
-    pdf.cell(w=70, h=10, txt=f'{max_angle_of_attack} Â°', ln=1)
+    pdf.cell(w=70, h=10, txt=f'{max_angle_of_attack} °', ln=1)
     pdf.cell(w=70, h=10, txt="Displacement: ", ln=0)
     pdf.cell(w=70, h=10, txt=f'{displacement} m', ln=1)
 

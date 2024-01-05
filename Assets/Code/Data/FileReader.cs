@@ -23,6 +23,11 @@ public class FileReader : DataSupplyBase
 
     private IEnumerator ReadFileCoroutune(string fullPath)
     {
+        if (!File.Exists(fullPath))
+        {
+            yield break;
+        }
+
         CurrentFileName = Path.GetFileName(fullPath);
 
         CallOnConnected();

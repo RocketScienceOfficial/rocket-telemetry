@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class DataDownloadPanelController : DataRecipient
+public class DataDownloadPanelController : MonoBehaviour, ICommandRecipient
 {
     [SerializeField] private TextMeshProUGUI m_PortText;
     [SerializeField] private TextMeshProUGUI m_StatusText;
@@ -18,12 +18,12 @@ public class DataDownloadPanelController : DataRecipient
     {
         SetStatus(false);
 
-        SerialPortController.Instance.SerialPortWrite("read-data\r");
+        SerialPortController.Instance.SerialPortWrite("data-read\r");
     }
 
-    public override void OnSetCommand(string command)
+    public void OnSetCommand(string command)
     {
-        if (command == "read-done")
+        if (command == "data-end")
         {
             SetStatus(true);
         }

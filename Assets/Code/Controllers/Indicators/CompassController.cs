@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class CompassUIController : MonoBehaviour
+public class CompassController : MonoBehaviour
 {
     private const char DEGREE_SIGN = '°';
 

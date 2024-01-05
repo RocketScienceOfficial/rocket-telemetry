@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,22 +17,6 @@ public class PortsUIController : MonoBehaviour
         SerialPortController.Instance.OnConnected += (sender, args) =>
         {
             FetchPorts();
-
-            switch (AppModeController.CurrentMode)
-            {
-                case AppMode.Telemetry:
-                    PanelsManager.Instance.DeactiveAllPanels();
-                    PanelsManager.Instance.SetPanelActive(Panel.Visualization, true);
-                    break;
-                case AppMode.DataDownload:
-                    PanelsManager.Instance.DeactiveAllPanels();
-                    PanelsManager.Instance.SetPanelActive(Panel.DataDownload, true);
-
-                    m_Downloader.StartDownload();
-                    break;
-                default:
-                    break;
-            }
         };
 
         SerialPortController.Instance.OnDisconnected += (sender, args) =>
@@ -47,7 +32,7 @@ public class PortsUIController : MonoBehaviour
     private void FetchPorts()
     {
         Clear();
-
+        
         foreach (var port in SerialPortController.Instance.ListSerialPorts())
         {
             SetupMicrocontroller(port);

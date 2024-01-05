@@ -6,37 +6,33 @@ using UnityEngine.UI;
 public class ModeSelectionPanelController : MonoBehaviour
 {
     [SerializeField] private Button m_TelemetryButton;
-    [SerializeField] private Button m_DataDownloadButton;
-    [SerializeField] private Button m_DataVisualizationButton;
-    [SerializeField] private Toggle m_DebugModeToggle;
+    [SerializeField] private Button m_DownloadButton;
+    [SerializeField] private Button m_ReplayButton;
+    [SerializeField] private Button m_SimulationButton;
 
     private void Start()
     {
+        PanelsManager.Instance.DeactiveAllPanels();
+        PanelsManager.Instance.SetPanelActive(Panel.ModeSelection, true);
+
         m_TelemetryButton.onClick.AddListener(() =>
         {
-            PanelsManager.Instance.DeactiveAllPanels();
-            PanelsManager.Instance.SetPanelActive(Panel.PortSelection, true);
-
-            AppModeController.SetMode(AppMode.Telemetry);
+            FlowManager.SelectFlow(new TelemetryFlow());
         });
 
-        m_DataDownloadButton.onClick.AddListener(() =>
+        m_DownloadButton.onClick.AddListener(() =>
         {
-            PanelsManager.Instance.DeactiveAllPanels();
-            PanelsManager.Instance.SetPanelActive(Panel.PortSelection, true);
-
-            AppModeController.SetMode(AppMode.DataDownload);
+            FlowManager.SelectFlow(new DownloadFlow());
         });
 
-        m_DataVisualizationButton.onClick.AddListener(() =>
+        m_ReplayButton.onClick.AddListener(() =>
         {
-            PanelsManager.Instance.DeactiveAllPanels();
-            PanelsManager.Instance.SetPanelActive(Panel.DataVisualizationPicker, true);
-
-            AppModeController.SetMode(AppMode.DataVisualization);
+            FlowManager.SelectFlow(new ReplayFlow());
         });
 
-        m_DebugModeToggle.isOn = AppModeController.IsDebugMode;
-        m_DebugModeToggle.onValueChanged.AddListener(val => AppModeController.IsDebugMode = val);
+        m_SimulationButton.onClick.AddListener(() =>
+        {
+            FlowManager.SelectFlow(new SimulationFlow());
+        });
     }
 }

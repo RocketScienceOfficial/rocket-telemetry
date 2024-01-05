@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RunCamController : DataRecipient
+public class RunCamController : MonoBehaviour, ITelemetryDataRecipient, IReplayDataRecipient, ISimulationDataRecipient
 {
     private const string RUN_CAM_NAME = "";
 
@@ -12,7 +12,7 @@ public class RunCamController : DataRecipient
     private bool _init = false;
     private WebCamTexture _texture;
 
-    public override void OnSetData(RecipentData data)
+    public void OnSetData(RecipientData data)
     {
         if (!_init)
         {
@@ -36,7 +36,7 @@ public class RunCamController : DataRecipient
 
             _texture = new WebCamTexture(devices[0].name);
             _texture.Play();
-
+            
             m_Image.texture = _texture;
             m_Image.rectTransform.sizeDelta = new Vector2(m_Image.rectTransform.sizeDelta.x, m_Image.rectTransform.sizeDelta.y * _texture.height / _texture.width);
 

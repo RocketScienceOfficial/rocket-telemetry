@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DataVisualizationPickerPanelController : MonoBehaviour
+public class FileSelectionPanelController : MonoBehaviour
 {    
     [SerializeField] private TMP_InputField m_PathInputField;
     [SerializeField] private Button m_SubmitButton;
@@ -20,11 +20,5 @@ public class DataVisualizationPickerPanelController : MonoBehaviour
                 FileReader.Instance.ReadFile(text);
             }
         });
-
-        FileReader.Instance.OnConnected += (sender, args) =>
-        {
-            PanelsManager.Instance.DeactiveAllPanels();
-            PanelsManager.Instance.SetPanelActive(Panel.Visualization, true);
-        };
     }
 }

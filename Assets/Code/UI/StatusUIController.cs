@@ -10,42 +10,36 @@ public class StatusUIController : MonoBehaviour
 
     private void Start()
     {
-        AppModeController.OnSetMode += (sender, args) =>
+        SerialPortController.Instance.OnConnected += (sender, args) =>
         {
-            AppModeController.CurrentDataSupply.OnConnected += (sender, args) =>
-            {
-                UpdatePortUI();
-            };
+            SetConnected(SerialPortController.Instance.GetPath(), false);
+        };
 
-            AppModeController.CurrentDataSupply.OnDisconnected += (sender, args) =>
-            {
-                UpdatePortUI();
-            };
+        SerialPortController.Instance.OnDisconnected += (sender, args) =>
+        {
+            SetDisconnected();
+        };
+
+        FileReader.Instance.OnConnected += (sender, args) =>
+        {
+            SetConnected(FileReader.Instance.GetPath(), true);
+        };
+
+        FileReader.Instance.OnDisconnected += (sender, args) =>
+        {
+            SetDisconnected();
         };
     }
 
-    private void UpdatePortUI()
+    private void SetConnected(string path, bool isFile)
     {
-        if (AppModeController.CurrentDataSupply.IsConnected())
-        {
-            m_PortText.SetText(AppModeController.CurrentDataSupply.GetPath());
+        m_PortText.SetText(path);
+        m_StatusText.SetText(!isFile ? "Connected" : "File");
+    }
 
-            switch (AppModeController.CurrentMode)
-            {
-                case AppMode.Telemetry:
-                    m_StatusText.SetText("Connected");
-                    break;
-                case AppMode.DataVisualization:
-                    m_StatusText.SetText("File");
-                    break;
-                default:
-                    break;
-            }
-        }
-        else
-        {
-            m_PortText.SetText("None");
-            m_StatusText.SetText("Disconnected");
-        }
+    private void SetDisconnected()
+    {
+        m_PortText.SetText("None");
+        m_StatusText.SetText("Disconnected");
     }
 }

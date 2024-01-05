@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class MapController : DataRecipient
+public class MapController : MonoBehaviour, ITelemetryDataRecipient, IReplayDataRecipient, ISimulationDataRecipient
 {
     private const string MAPS_API_KEY = "AIzaSyCcEhow5e8b5YGwrRYCfauF6Vi-kv_rfm8";
     private const int MAP_ZOOM = 13;
@@ -23,13 +23,8 @@ public class MapController : DataRecipient
 
     private float _lastUpdateTime = -999f;
 
-    public override void OnSetData(RecipentData data)
+    public void OnSetData(RecipientData data)
     {
-        if (AppModeController.CurrentMode == AppMode.DataDownload)
-        {
-            return;
-        }
-
         m_LatitudeText.SetText($"{MathUtils.NumberFiveDecimalPlaces(data.latitude)}°");
         m_LongtitudeText.SetText($"{MathUtils.NumberFiveDecimalPlaces(data.longitude)}°");
 

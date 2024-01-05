@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.IO;
 using UnityEngine;
-using System.Diagnostics;
 using System.Threading;
 
 using Debug = UnityEngine.Debug;

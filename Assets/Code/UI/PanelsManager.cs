@@ -7,7 +7,7 @@ public enum Panel
 {
     Visualization,
     DataDownload,
-    DataVisualizationPicker,
+    FileSelection,
     PortSelection,
     ModeSelection,
 }
@@ -18,7 +18,7 @@ public class PanelsManager : MonoBehaviour
 
     [SerializeField] private GameObject m_VisualizationPanel;
     [SerializeField] private GameObject m_DataDownloadPanel;
-    [SerializeField] private GameObject m_DataVisualizationPickerPanel;
+    [SerializeField] private GameObject m_FileSelecrtionPanel;
     [SerializeField] private GameObject m_PortSelectionPanel;
     [SerializeField] private GameObject m_ModeSelectionPanel;
 
@@ -27,21 +27,15 @@ public class PanelsManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-    }
 
-    private void Start()
-    {
         m_Panels = new()
         {
             { Panel.Visualization, m_VisualizationPanel },
             { Panel.DataDownload, m_DataDownloadPanel },
-            { Panel.DataVisualizationPicker, m_DataVisualizationPickerPanel },
+            { Panel.FileSelection, m_FileSelecrtionPanel },
             { Panel.PortSelection, m_PortSelectionPanel },
             { Panel.ModeSelection, m_ModeSelectionPanel },
         };
-
-        DeactiveAllPanels();
-        SetPanelActive(Panel.ModeSelection, true);
     }
 
     public void SetPanelActive(Panel panel, bool active)

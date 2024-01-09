@@ -25,6 +25,8 @@ public class FileReader : DataSupplyBase
     {
         if (!File.Exists(fullPath))
         {
+            AlertManager.Alert("Couldn't find provided file");
+
             yield break;
         }
 

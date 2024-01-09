@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RunCamController : MonoBehaviour, ITelemetryDataRecipient, IReplayDataRecipient, ISimulationDataRecipient
+public class RunCamController : MonoBehaviour, ITelemetryDataRecipient
 {
     private const string RUN_CAM_NAME = "";
 
@@ -16,31 +16,31 @@ public class RunCamController : MonoBehaviour, ITelemetryDataRecipient, IReplayD
     {
         if (!_init)
         {
-            var devices = WebCamTexture.devices;
-            var valid = false;
-
-            foreach (var device in devices)
+            if (CameraExists())
             {
-                if (device.name == RUN_CAM_NAME)
-                {
-                    valid = true;
+                _texture = new WebCamTexture(RUN_CAM_NAME);
+                _texture.Play();
 
-                    break;
-                }
+                m_Image.texture = _texture;
+                m_Image.rectTransform.sizeDelta = new Vector2(m_Image.rectTransform.sizeDelta.x, m_Image.rectTransform.sizeDelta.y * _texture.height / _texture.width);
             }
-
-            if (!valid)
-            {
-                return;
-            }
-
-            _texture = new WebCamTexture(devices[0].name);
-            _texture.Play();
-            
-            m_Image.texture = _texture;
-            m_Image.rectTransform.sizeDelta = new Vector2(m_Image.rectTransform.sizeDelta.x, m_Image.rectTransform.sizeDelta.y * _texture.height / _texture.width);
 
             _init = true;
         }
+    }
+
+    private bool CameraExists()
+    {
+        var devices = WebCamTexture.devices;
+
+        foreach (var device in devices)
+        {
+            if (device.name == RUN_CAM_NAME)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

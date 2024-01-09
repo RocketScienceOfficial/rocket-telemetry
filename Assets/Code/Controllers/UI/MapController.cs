@@ -11,7 +11,6 @@ using UnityEngine.UI;
 
 public class MapController : MonoBehaviour, ITelemetryDataRecipient, IReplayDataRecipient, ISimulationDataRecipient
 {
-    private const string MAPS_API_KEY = "AIzaSyCcEhow5e8b5YGwrRYCfauF6Vi-kv_rfm8";
     private const int MAP_ZOOM = 13;
     private const int MAP_IMAGE_SIZE = 350;
     private const string MAPS_URL = "https://maps.googleapis.com/maps/api/staticmap?";
@@ -38,17 +37,22 @@ public class MapController : MonoBehaviour, ITelemetryDataRecipient, IReplayData
 
     private IEnumerator GetLocationRoutine(float lat, float lon)
     {
-        var url = $"{MAPS_URL}center={lat},{lon}&zoom={MAP_ZOOM}&size={MAP_IMAGE_SIZE}x{MAP_IMAGE_SIZE}&key={MAPS_API_KEY}";
-
-        using var map = UnityWebRequestTexture.GetTexture(url);
-
-        yield return map.SendWebRequest();
-
-        if (map.result == UnityWebRequest.Result.ConnectionError || map.result == UnityWebRequest.Result.ProtocolError)
+        if (!string.IsNullOrEmpty(ConfigLoader.CurrentData.mapsApiKey))
         {
-            Debug.LogError("Map error: " + map.error);
-        }
+            var url = $"{MAPS_URL}center={lat},{lon}&zoom={MAP_ZOOM}&size={MAP_IMAGE_SIZE}x{MAP_IMAGE_SIZE}&key={ConfigLoader.CurrentData.mapsApiKey}";
 
-        m_MapImage.texture = DownloadHandlerTexture.GetContent(map);
+            using var map = UnityWebRequestTexture.GetTexture(url);
+
+            yield return map.SendWebRequest();
+
+            if (map.result == UnityWebRequest.Result.ConnectionError || map.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogError("Map error: " + map.error);
+
+                AlertManager.Alert("Map error occured");
+            }
+
+            m_MapImage.texture = DownloadHandlerTexture.GetContent(map);
+        }
     }
 }

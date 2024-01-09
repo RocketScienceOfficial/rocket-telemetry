@@ -20,4 +20,5 @@ public struct RecipientData
     public float pressure;
     public float temperature;
     public int signalStrength;
+    public int packetLoss;
 }

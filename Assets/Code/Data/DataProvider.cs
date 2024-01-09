@@ -19,51 +19,61 @@ public class DataProvider : MonoBehaviour
     {
         dataSupply.OnSupplyReadData += (sender, args) =>
         {
-            var msg = args.Data;
-
-            if (string.IsNullOrEmpty(msg))
+            try
             {
-                return;
-            }
+                var msg = args.Data;
 
-            if (msg.StartsWith("/*") && msg.EndsWith("*/"))
-            {
-                msg = msg.Remove(0, 2);
-                msg = msg.Remove(msg.Length - 2, 2);
-
-                var data = msg.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-                for (var i = 0; i < data.Length; i++)
+                if (string.IsNullOrEmpty(msg))
                 {
-                    data[i] = data[i].Replace('.', ',');
+                    return;
                 }
 
-                var recipentData = new RecipientData
+                if (msg.StartsWith("/*") && msg.EndsWith("*/"))
                 {
-                    positionX = float.Parse(data[0]),
-                    positionY = float.Parse(data[1]),
-                    positionZ = float.Parse(data[2]),
-                    roll = float.Parse(data[3]),
-                    pitch = float.Parse(data[4]),
-                    yaw = float.Parse(data[5]),
-                    latitude = float.Parse(data[6]),
-                    longitude = float.Parse(data[7]),
-                    altitude = float.Parse(data[8]),
-                    velocity = float.Parse(data[9]),
-                    batteryVoltage = float.Parse(data[10]),
-                    batteryPercentage = float.Parse(data[11]),
-                    pressure = float.Parse(data[12]),
-                    temperature = float.Parse(data[13]),
-                    signalStrength = int.Parse(data[14]),
-                };
+                    msg = msg.Remove(0, 2);
+                    msg = msg.Remove(msg.Length - 2, 2);
 
-                SetData(recipentData);
+                    var data = msg.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                    for (var i = 0; i < data.Length; i++)
+                    {
+                        data[i] = data[i].Replace('.', ',');
+                    }
+
+                    var recipentData = new RecipientData
+                    {
+                        positionX = float.Parse(data[0]),
+                        positionY = float.Parse(data[1]),
+                        positionZ = float.Parse(data[2]),
+                        roll = float.Parse(data[3]),
+                        pitch = float.Parse(data[4]),
+                        yaw = float.Parse(data[5]),
+                        latitude = float.Parse(data[6]),
+                        longitude = float.Parse(data[7]),
+                        altitude = float.Parse(data[8]),
+                        velocity = float.Parse(data[9]),
+                        batteryVoltage = float.Parse(data[10]),
+                        batteryPercentage = float.Parse(data[11]),
+                        pressure = float.Parse(data[12]),
+                        temperature = float.Parse(data[13]),
+                        signalStrength = int.Parse(data[14]),
+                        packetLoss = int.Parse(data[15]),
+                    };
+
+                    SetData(recipentData);
+                }
+                else if (msg.StartsWith("CMD:"))
+                {
+                    msg = msg.Remove(0, 4);
+
+                    SetCommand(msg);
+                }
             }
-            else if (msg.StartsWith("CMD:"))
+            catch (Exception ex)
             {
-                msg = msg.Remove(0, 4);
+                Debug.LogError(ex.Message);
 
-                SetCommand(msg);
+                AlertManager.Alert("Unexpected error occured while parsing data frame");
             }
         };
     }

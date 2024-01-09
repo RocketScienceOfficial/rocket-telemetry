@@ -6,6 +6,7 @@ using UnityEngine;
 public enum Panel
 {
     Visualization,
+    TelemetryConfiguration,
     DataDownload,
     FileSelection,
     PortSelection,
@@ -17,6 +18,7 @@ public class PanelsManager : MonoBehaviour
     public static PanelsManager Instance { get; private set; }
 
     [SerializeField] private GameObject m_VisualizationPanel;
+    [SerializeField] private GameObject m_TelemetryConfigurationPanel;
     [SerializeField] private GameObject m_DataDownloadPanel;
     [SerializeField] private GameObject m_FileSelecrtionPanel;
     [SerializeField] private GameObject m_PortSelectionPanel;
@@ -31,6 +33,7 @@ public class PanelsManager : MonoBehaviour
         m_Panels = new()
         {
             { Panel.Visualization, m_VisualizationPanel },
+            { Panel.TelemetryConfiguration, m_TelemetryConfigurationPanel },
             { Panel.DataDownload, m_DataDownloadPanel },
             { Panel.FileSelection, m_FileSelecrtionPanel },
             { Panel.PortSelection, m_PortSelectionPanel },

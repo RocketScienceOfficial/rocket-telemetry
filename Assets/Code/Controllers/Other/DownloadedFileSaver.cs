@@ -86,6 +86,7 @@ public class DownloadedFileSaver : MonoBehaviour, IDownloadDataRecipient, IComma
             WriteFileValue(data.pressure);
             WriteFileValue(data.temperature);
             WriteFileValue(data.signalStrength);
+            WriteFileValue(data.packetLoss);
 
             _writer.WriteLine(_csvBuilder.ToString());
             _csvBuilder.Clear();

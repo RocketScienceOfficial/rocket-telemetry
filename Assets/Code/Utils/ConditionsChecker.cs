@@ -13,7 +13,7 @@ public class ConditionsChecker : MonoBehaviour
         {
             if (!CheckConditions())
             {
-                UnityEngine.Debug.LogError("Couldn't validate app!");
+                AlertManager.Alert("Couldn't validate app");
             }
 
             PlayerPrefs.SetInt(VALIDATED_KEY, 1);

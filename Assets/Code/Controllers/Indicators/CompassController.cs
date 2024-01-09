@@ -12,7 +12,7 @@ public class CompassController : MonoBehaviour
 
     public void SetAngle(float angle)
     {
-        m_ArrowPivot.eulerAngles = new Vector3(0f, 0f, angle);
+        m_ArrowPivot.eulerAngles = new Vector3(0f, 0f, -angle);
         m_AngleText.SetText(angle.ToString() + DEGREE_SIGN);
     }
 }

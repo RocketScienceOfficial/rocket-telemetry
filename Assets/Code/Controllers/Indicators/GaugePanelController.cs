@@ -14,7 +14,7 @@ public class GaugePanelController : MonoBehaviour
 
     private void Init()
     {
-        _maxFill = transform.Find("Panel").GetComponent<Image>().fillAmount;
+        _maxFill = transform.Find("Red Background").GetComponent<Image>().fillAmount;
     }
 
     public void SetValue(float value, float minValue, float maxValue)

@@ -127,7 +127,7 @@ public class SerialPortController : DataSupplyBase
     {
         if (IsConnected())
         {
-            _currentSerialPort.WriteLine(data);
+            _currentSerialPort.WriteLine(data + "\r");
         }
     }
 

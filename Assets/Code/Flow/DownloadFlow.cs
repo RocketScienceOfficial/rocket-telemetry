@@ -11,6 +11,8 @@ public class DownloadFlow : IFlowController
 
         SerialPortController.Instance.OnConnected += (sender, args) =>
         {
+            SerialPortController.Instance.SerialPortWrite("app-mode-download");
+
             PanelsManager.Instance.DeactiveAllPanels();
             PanelsManager.Instance.SetPanelActive(Panel.DataDownload, true);
         };

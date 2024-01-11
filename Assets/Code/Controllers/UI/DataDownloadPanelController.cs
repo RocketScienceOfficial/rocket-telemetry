@@ -18,7 +18,7 @@ public class DataDownloadPanelController : MonoBehaviour, ICommandRecipient
     {
         SetStatus(false);
 
-        SerialPortController.Instance.SerialPortWrite("data-read\r");
+        SerialPortController.Instance.SerialPortWrite("data-read");
     }
 
     public void OnSetCommand(string command)

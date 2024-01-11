@@ -14,11 +14,12 @@ public struct RecipientData
     public float longitude;
     public float altitude;
     public float acceleration;
-    public float velocity;
+    public float speed;
     public float batteryVoltage;
     public float batteryPercentage;
     public float pressure;
     public float temperature;
     public int signalStrength;
     public int packetLoss;
+    public int state;
 }

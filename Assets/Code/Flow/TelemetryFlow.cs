@@ -11,8 +11,10 @@ public class TelemetryFlow : IFlowController
 
         SerialPortController.Instance.OnConnected += (sender, args) =>
         {
+            SerialPortController.Instance.SerialPortWrite("app-mode-telemetry");
+
             PanelsManager.Instance.DeactiveAllPanels();
-            PanelsManager.Instance.SetPanelActive(Panel.Visualization, true);
+            PanelsManager.Instance.SetPanelActive(Panel.TelemetryConfiguration, true);
         };
 
         DataProvider.SetRecipientType<ITelemetryDataRecipient>();

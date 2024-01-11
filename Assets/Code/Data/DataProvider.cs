@@ -51,7 +51,7 @@ public class DataProvider : MonoBehaviour
                         latitude = float.Parse(data[6]),
                         longitude = float.Parse(data[7]),
                         altitude = float.Parse(data[8]),
-                        velocity = float.Parse(data[9]),
+                        speed = float.Parse(data[9]),
                         batteryVoltage = float.Parse(data[10]),
                         batteryPercentage = float.Parse(data[11]),
                         pressure = float.Parse(data[12]),

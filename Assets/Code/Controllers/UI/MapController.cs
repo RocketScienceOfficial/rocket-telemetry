@@ -14,11 +14,12 @@ public class MapController : MonoBehaviour, ITelemetryDataRecipient, IReplayData
     private const int MAP_ZOOM = 13;
     private const int MAP_IMAGE_SIZE = 350;
     private const string MAPS_URL = "https://maps.googleapis.com/maps/api/staticmap?";
-    private const float MAP_UPDATE_RATE = 2f;
+    private const float MAP_UPDATE_RATE = 20f;
 
     [SerializeField] private TextMeshProUGUI m_LatitudeText;
     [SerializeField] private TextMeshProUGUI m_LongtitudeText;
     [SerializeField] private RawImage m_MapImage;
+    [SerializeField] private RawImage m_MapBigImage;
 
     private float _lastUpdateTime = -999f;
 
@@ -52,7 +53,10 @@ public class MapController : MonoBehaviour, ITelemetryDataRecipient, IReplayData
                 AlertManager.Alert("Map error occured");
             }
 
-            m_MapImage.texture = DownloadHandlerTexture.GetContent(map);
+            var content = DownloadHandlerTexture.GetContent(map);
+
+            m_MapImage.texture = content;
+            m_MapBigImage.texture = content;
         }
     }
 }

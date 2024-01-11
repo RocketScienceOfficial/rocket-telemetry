@@ -16,6 +16,8 @@ public class SimulationFlow : IFlowController
 
             SerialPortController.Instance.OnConnected += (sender, args) =>
             {
+                SerialPortController.Instance.SerialPortWrite("app-mode-simulation");
+
                 PanelsManager.Instance.DeactiveAllPanels();
                 PanelsManager.Instance.SetPanelActive(Panel.Visualization, true);
             };

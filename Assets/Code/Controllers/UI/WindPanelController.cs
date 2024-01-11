@@ -11,13 +11,14 @@ public class WindPanelController : MonoBehaviour
 {
     private const float HELLMAN_EXPONENT = 0.2f;
 
+    [SerializeField] private Button m_OpenPanelButton;
+    [SerializeField] private GameObject m_Panel;
     [SerializeField] private GameObject m_WindPanel_5000m;
     [SerializeField] private GameObject m_WindPanel_2000m;
     [SerializeField] private GameObject m_WindPanel_1000m;
     [SerializeField] private GameObject m_WindPanel_100m;
     [SerializeField] private GameObject m_WindPanel_10m;
-    [SerializeField] private CompassController m_Compass;
-    [SerializeField] private Button m_RefreshButton;
+    [SerializeField] private TextMeshProUGUI m_DirectionText;
     [SerializeField] private Gradient m_WindColorGradient;
     [SerializeField] private float m_MaxWindSpeed;
 
@@ -31,7 +32,15 @@ public class WindPanelController : MonoBehaviour
     {
         Refresh();
 
-        m_RefreshButton.onClick.AddListener(Refresh);
+        m_OpenPanelButton.onClick.AddListener(() =>
+        {
+            m_Panel.SetActive(!m_Panel.activeSelf);
+
+            if (m_Panel.activeSelf)
+            {
+                Refresh();
+            }
+        });
     }
 
     private void Refresh()
@@ -47,7 +56,7 @@ public class WindPanelController : MonoBehaviour
         UpdateWindPanel(m_WindPanel_100m, 100);
         UpdateWindPanel(m_WindPanel_10m, 10);
 
-        m_Compass.SetAngle(_windDeg);
+        m_DirectionText.SetText(_windDeg + "°");
     }
 
     private void UpdateWindPanel(GameObject panel, float height)
@@ -55,7 +64,6 @@ public class WindPanelController : MonoBehaviour
         var speed = CalculateWindGradient(_windSpeed, height);
         var color = m_WindColorGradient.Evaluate(speed / m_MaxWindSpeed);
 
-        panel.transform.Find("Height Text").GetComponent<TextMeshProUGUI>().SetText(height + "m");
         panel.transform.Find("Speed Text").GetComponent<TextMeshProUGUI>().SetText(MathUtils.NumberOneDecimalPlace(speed) + "m/s");
         panel.transform.Find("Speed Text").GetComponent<TextMeshProUGUI>().color = color;
     }

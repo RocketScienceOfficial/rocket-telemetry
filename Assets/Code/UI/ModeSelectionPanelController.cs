@@ -30,9 +30,9 @@ public class ModeSelectionPanelController : MonoBehaviour
             FlowManager.SelectFlow(new ReplayFlow());
         });
 
-        m_SimulationButton.onClick.AddListener(() =>
-        {
-            FlowManager.SelectFlow(new SimulationFlow());
-        });
+        //m_SimulationButton.onClick.AddListener(() =>
+        //{
+        //    FlowManager.SelectFlow(new SimulationFlow());
+        //});
     }
 }

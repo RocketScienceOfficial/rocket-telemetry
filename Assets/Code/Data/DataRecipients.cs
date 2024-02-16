@@ -11,6 +11,10 @@ public interface ITelemetryDataRecipient : IDataRecipient
 {
 }
 
+public interface IConfigDataRecipient : IDataRecipient
+{
+}
+
 public interface IDownloadDataRecipient : IDataRecipient
 {
 }

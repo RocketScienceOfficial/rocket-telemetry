@@ -18,14 +18,9 @@ public class MissionWheelController : MonoBehaviour, ITelemetryDataRecipient, IR
     {
         m_Fill.fillAmount = MIN_FILL;
     }
-    private int state = -1;
+    
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            OnSetData(new RecipientData { state = ++state });
-        }
-
         if (_currentCheckpoint != null)
         {
             m_Fill.fillAmount += Time.deltaTime * FILL_SPEED;

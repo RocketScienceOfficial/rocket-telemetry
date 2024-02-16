@@ -28,10 +28,10 @@ public class DataProvider : MonoBehaviour
                     return;
                 }
 
-                if (msg.StartsWith("/*") && msg.EndsWith("*/"))
+                if (msg.StartsWith("/*") && msg.EndsWith("*/\n"))
                 {
                     msg = msg.Remove(0, 2);
-                    msg = msg.Remove(msg.Length - 2, 2);
+                    msg = msg.Remove(msg.Length - 3, 3);
 
                     var data = msg.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -64,7 +64,7 @@ public class DataProvider : MonoBehaviour
                 }
                 else if (msg.StartsWith("CMD:"))
                 {
-                    msg = msg.Remove(0, 4);
+                    msg = msg.Replace("CMD:", "").Replace("\n", "");
 
                     SetCommand(msg);
                 }

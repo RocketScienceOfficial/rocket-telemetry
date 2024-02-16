@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ModeSelectionPanelController : MonoBehaviour
 {
     [SerializeField] private Button m_TelemetryButton;
+    [SerializeField] private Button m_ConfigButton;
     [SerializeField] private Button m_DownloadButton;
     [SerializeField] private Button m_ReplayButton;
     [SerializeField] private Button m_SimulationButton;
@@ -18,6 +19,11 @@ public class ModeSelectionPanelController : MonoBehaviour
         m_TelemetryButton.onClick.AddListener(() =>
         {
             FlowManager.SelectFlow(new TelemetryFlow());
+        });
+
+        m_ConfigButton.onClick.AddListener(() =>
+        {
+            FlowManager.SelectFlow(new ConfigFlow());
         });
 
         m_DownloadButton.onClick.AddListener(() =>

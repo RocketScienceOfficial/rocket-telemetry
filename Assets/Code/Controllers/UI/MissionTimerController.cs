@@ -49,7 +49,7 @@ public class MissionTimerController : MonoBehaviour
     {
         var hours = Mathf.FloorToInt(_currentTimer / 3600f);
         var minutes = Mathf.FloorToInt(_currentTimer % 3600f / 60f);
-        var seconds = Mathf.FloorToInt(_currentTimer - hours * 3600f + minutes + 60f);
+        var seconds = Mathf.FloorToInt(_currentTimer - hours * 3600f - minutes * 60f);
 
         m_MissionTimerText.SetText("T" + (_currentTimer >= 0f ? "+" : "-") + (hours <= 9 ? "0" + hours : hours) + ":" + (minutes <= 9 ? "0" + minutes : minutes) + ":" + (seconds <= 9 ? "0" + seconds : seconds));
     }

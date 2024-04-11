@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class SignalPanelController : MonoBehaviour, ITelemetryDataRecipient, IReplayDataRecipient, ISimulationDataRecipient
 {
-    private const float MIN_SIGNAL = -150f;
+    private const float MIN_SIGNAL = -130f;
     private const float MAX_SIGNAL = -50f;
 
     [SerializeField] private Image m_SignalFillImage;

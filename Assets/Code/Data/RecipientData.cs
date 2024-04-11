@@ -10,16 +10,14 @@ public struct RecipientData
     public float roll;
     public float pitch;
     public float yaw;
-    public float latitude;
-    public float longitude;
+    public double latitude;
+    public double longitude;
     public float altitude;
-    public float acceleration;
-    public float speed;
+    public float velocity;
     public float batteryVoltage;
-    public float batteryPercentage;
+    public int batteryPercentage;
     public float pressure;
     public float temperature;
     public int signalStrength;
     public int packetLoss;
-    public int state;
 }

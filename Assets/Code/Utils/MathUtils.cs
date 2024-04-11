@@ -14,8 +14,8 @@ public static class MathUtils
         return string.Format("{0:0.00}", value).Replace(',', '.');
     }
 
-    public static string NumberFiveDecimalPlaces(float value)
+    public static string NumberSevenDecimalPlaces(double value)
     {
-        return string.Format("{0:0.00000}", value).Replace(',', '.');
+        return string.Format("{0:0.0000000}", value).Replace(',', '.');
     }
 }

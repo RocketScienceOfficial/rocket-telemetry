@@ -25,8 +25,8 @@ public class MapController : MonoBehaviour, ITelemetryDataRecipient, IReplayData
 
     public void OnSetData(RecipientData data)
     {
-        m_LatitudeText.SetText($"{MathUtils.NumberFiveDecimalPlaces(data.latitude)}°");
-        m_LongtitudeText.SetText($"{MathUtils.NumberFiveDecimalPlaces(data.longitude)}°");
+        m_LatitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(data.latitude)}°");
+        m_LongtitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(data.longitude)}°");
 
         if (Time.time > _lastUpdateTime + MAP_UPDATE_RATE)
         {
@@ -36,7 +36,7 @@ public class MapController : MonoBehaviour, ITelemetryDataRecipient, IReplayData
         }
     }
 
-    private IEnumerator GetLocationRoutine(float lat, float lon)
+    private IEnumerator GetLocationRoutine(double lat, double lon)
     {
         if (!string.IsNullOrEmpty(ConfigLoader.CurrentData.mapsApiKey))
         {

@@ -76,11 +76,10 @@ public class DownloadedFileSaver : MonoBehaviour, IDownloadDataRecipient, IComma
             WriteFileValue(data.roll);
             WriteFileValue(data.pitch);
             WriteFileValue(data.yaw);
-            WriteFileValue(data.latitude);
-            WriteFileValue(data.longitude);
+            WriteFileValue((float)data.latitude);
+            WriteFileValue((float)data.longitude);
             WriteFileValue(data.altitude);
-            WriteFileValue(data.acceleration);
-            WriteFileValue(data.speed);
+            WriteFileValue(data.velocity);
             WriteFileValue(data.batteryVoltage);
             WriteFileValue(data.batteryPercentage);
             WriteFileValue(data.pressure);

@@ -21,20 +21,20 @@ public class ModeSelectionPanelController : MonoBehaviour
             FlowManager.SelectFlow(new TelemetryFlow());
         });
 
-        m_ConfigButton.onClick.AddListener(() =>
-        {
-            FlowManager.SelectFlow(new ConfigFlow());
-        });
+        //m_ConfigButton.onClick.AddListener(() =>
+        //{
+        //    FlowManager.SelectFlow(new ConfigFlow());
+        //});
 
-        m_DownloadButton.onClick.AddListener(() =>
-        {
-            FlowManager.SelectFlow(new DownloadFlow());
-        });
+        //m_DownloadButton.onClick.AddListener(() =>
+        //{
+        //    FlowManager.SelectFlow(new DownloadFlow());
+        //});
 
-        m_ReplayButton.onClick.AddListener(() =>
-        {
-            FlowManager.SelectFlow(new ReplayFlow());
-        });
+        //m_ReplayButton.onClick.AddListener(() =>
+        //{
+        //    FlowManager.SelectFlow(new ReplayFlow());
+        //});
 
         //m_SimulationButton.onClick.AddListener(() =>
         //{

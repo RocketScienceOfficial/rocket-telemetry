@@ -28,7 +28,7 @@ public class DataProvider : MonoBehaviour
                     return;
                 }
 
-                if (msg.StartsWith("/*") && msg.EndsWith("*/\n"))
+                if (msg.StartsWith("/*") && msg.EndsWith("*/"))
                 {
                     msg = msg.Remove(0, 2);
                     msg = msg.Remove(msg.Length - 3, 3);
@@ -48,12 +48,12 @@ public class DataProvider : MonoBehaviour
                         roll = float.Parse(data[3]),
                         pitch = float.Parse(data[4]),
                         yaw = float.Parse(data[5]),
-                        latitude = float.Parse(data[6]),
-                        longitude = float.Parse(data[7]),
+                        latitude = double.Parse(data[6]),
+                        longitude = double.Parse(data[7]),
                         altitude = float.Parse(data[8]),
-                        speed = float.Parse(data[9]),
+                        velocity = float.Parse(data[9]),
                         batteryVoltage = float.Parse(data[10]),
-                        batteryPercentage = float.Parse(data[11]),
+                        batteryPercentage = int.Parse(data[11]),
                         pressure = float.Parse(data[12]),
                         temperature = float.Parse(data[13]),
                         signalStrength = int.Parse(data[14]),

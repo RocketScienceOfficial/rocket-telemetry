@@ -16,26 +16,26 @@ public class MissionWheelController : MonoBehaviour, ITelemetryDataRecipient, IR
 
     private void Start()
     {
-        m_Fill.fillAmount = MIN_FILL;
+        //m_Fill.fillAmount = MIN_FILL;
     }
     
     private void Update()
     {
-        if (_currentCheckpoint != null)
-        {
-            m_Fill.fillAmount += Time.deltaTime * FILL_SPEED;
+        //if (_currentCheckpoint != null)
+        //{
+        //    m_Fill.fillAmount += Time.deltaTime * FILL_SPEED;
 
-            if (m_Fill.fillAmount >= _currentCheckpoint.fillThreshold)
-            {
-                _currentCheckpoint.obj.transform.Find("Background").GetComponent<Image>().color = _currentCheckpoint.obj.GetComponent<Image>().color;
-                _currentCheckpoint = null;
-            }
-        }
+        //    if (m_Fill.fillAmount >= _currentCheckpoint.fillThreshold)
+        //    {
+        //        _currentCheckpoint.obj.transform.Find("Background").GetComponent<Image>().color = _currentCheckpoint.obj.GetComponent<Image>().color;
+        //        _currentCheckpoint = null;
+        //    }
+        //}
     }
 
     public void OnSetData(RecipientData recipient)
     {
-        _currentCheckpoint = m_Checkpoints[recipient.state];
+        //_currentCheckpoint = m_Checkpoints[recipient.state];
     }
 
 

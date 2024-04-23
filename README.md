@@ -4,19 +4,13 @@
 Simple application made in Unity for rocket telemetry
 
 ## Features
- - Live Telemetry
-   - Speed
-   - Altitude
-   - Battery
-   - Signal
-   - Map (Google Maps)
-   - Wind prediction (OpenWeatherMap)
-   - Pre-flight checks
-   - PDF Report
-   - Flight configuration
- - Data download
- - Data replay
- - Simulation from .csv file
+ - Speed
+ - Altitude
+ - Orientation
+ - Battery
+ - Signal
+ - Map (Google Maps)
+ - Wind prediction (OpenWeatherMap)
 
 ## Setup
 Project is done on Unity 2021.3.2f1 but it should be fine to run it on other versions

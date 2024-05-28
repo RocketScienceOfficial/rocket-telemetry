@@ -6,11 +6,7 @@ using UnityEngine;
 public enum Panel
 {
     Visualization,
-    ConfigPanel,
-    DataDownload,
-    FileSelection,
     PortSelection,
-    ModeSelection,
 }
 
 public class PanelsManager : MonoBehaviour
@@ -18,11 +14,7 @@ public class PanelsManager : MonoBehaviour
     public static PanelsManager Instance { get; private set; }
 
     [SerializeField] private GameObject m_VisualizationPanel;
-    [SerializeField] private GameObject m_ConfigPanel;
-    [SerializeField] private GameObject m_DataDownloadPanel;
-    [SerializeField] private GameObject m_FileSelecrtionPanel;
     [SerializeField] private GameObject m_PortSelectionPanel;
-    [SerializeField] private GameObject m_ModeSelectionPanel;
 
     private Dictionary<Panel, GameObject> m_Panels;
 
@@ -33,11 +25,7 @@ public class PanelsManager : MonoBehaviour
         m_Panels = new()
         {
             { Panel.Visualization, m_VisualizationPanel },
-            { Panel.ConfigPanel, m_ConfigPanel },
-            { Panel.DataDownload, m_DataDownloadPanel },
-            { Panel.FileSelection, m_FileSelecrtionPanel },
             { Panel.PortSelection, m_PortSelectionPanel },
-            { Panel.ModeSelection, m_ModeSelectionPanel },
         };
     }
 

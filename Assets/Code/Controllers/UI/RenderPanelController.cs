@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RenderPanelController : MonoBehaviour, ITelemetryDataRecipient, IReplayDataRecipient, ISimulationDataRecipient
+public class RenderPanelController : MonoBehaviour, IDataRecipient
 {
     [SerializeField] private GaugePanelController m_SpeedPanel;
     [SerializeField] private GaugePanelController m_AltitudePanel;

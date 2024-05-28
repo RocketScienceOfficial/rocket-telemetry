@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class OrientationPanelController : MonoBehaviour, ITelemetryDataRecipient, IReplayDataRecipient, ISimulationDataRecipient
+public class OrientationPanelController : MonoBehaviour, IDataRecipient
 {
     [SerializeField] private TextMeshProUGUI m_RollText;
     [SerializeField] private TextMeshProUGUI m_PitchText;

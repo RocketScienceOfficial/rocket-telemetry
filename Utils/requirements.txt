@@ -1,2 +1,0 @@
-matplotlib==3.6.2
-fpdf==1.7.2

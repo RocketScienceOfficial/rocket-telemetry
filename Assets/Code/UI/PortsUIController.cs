@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PortsUIController : MonoBehaviour
 {
-    [SerializeField] private DataDownloadPanelController m_Downloader;
     [SerializeField] private GameObject m_MicrocontrollerPanel;
     [SerializeField] private Transform m_Parent;
     [SerializeField] private Button m_RefreshButton;
@@ -52,8 +50,8 @@ public class PortsUIController : MonoBehaviour
         var obj = Instantiate(m_MicrocontrollerPanel, m_Parent);
 
         obj.transform.Find("Image").GetComponentInChildren<TextMeshProUGUI>().SetText(path);
-        obj.transform.Find("Connect Button").GetComponentInChildren<TextMeshProUGUI>().SetText(SerialPortController.Instance.GetPath() == path ? "CONNECTED" : "CONNECT");
-        obj.transform.Find("Connect Button").GetComponent<Button>().interactable = SerialPortController.Instance.GetPath() != path;
+        obj.transform.Find("Connect Button").GetComponentInChildren<TextMeshProUGUI>().SetText(SerialPortController.Instance.Path == path ? "CONNECTED" : "CONNECT");
+        obj.transform.Find("Connect Button").GetComponent<Button>().interactable = SerialPortController.Instance.Path != path;
         obj.transform.Find("Connect Button").GetComponent<Button>().onClick.AddListener(() => SerialPortController.Instance.Connect(path));
     }
 }

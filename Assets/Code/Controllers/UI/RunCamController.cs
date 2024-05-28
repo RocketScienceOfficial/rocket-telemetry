@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RunCamController : MonoBehaviour, ITelemetryDataRecipient
+public class RunCamController : MonoBehaviour, IDataRecipient
 {
     private const string RUN_CAM_NAME = "HD Pro Webcam C920";
 
@@ -23,7 +23,7 @@ public class RunCamController : MonoBehaviour, ITelemetryDataRecipient
 
                 m_Image.color = Color.white;
                 m_Image.texture = _texture;
-                m_Image.rectTransform.sizeDelta = new Vector2(m_Image.rectTransform.sizeDelta.x * _texture.height / _texture.width, m_Image.rectTransform.sizeDelta.y);
+                m_Image.rectTransform.sizeDelta = new Vector2(m_Image.rectTransform.sizeDelta.y * _texture.width / _texture.height, m_Image.rectTransform.sizeDelta.y);
             }
 
             _init = true;

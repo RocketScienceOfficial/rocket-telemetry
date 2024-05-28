@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BatteryPanelController : MonoBehaviour, ITelemetryDataRecipient, IReplayDataRecipient, ISimulationDataRecipient
+public class BatteryPanelController : MonoBehaviour, IDataRecipient
 {
     [SerializeField] private TextMeshProUGUI m_PercentageText;
     [SerializeField] private TextMeshProUGUI m_VoltageText;

@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TelemetryFlow : IFlowController
+public class FlowManager : MonoBehaviour
 {
-    public void Init()
+    public void Start()
     {
         PanelsManager.Instance.DeactiveAllPanels();
         PanelsManager.Instance.SetPanelActive(Panel.PortSelection, true);
@@ -16,8 +16,5 @@ public class TelemetryFlow : IFlowController
             PanelsManager.Instance.DeactiveAllPanels();
             PanelsManager.Instance.SetPanelActive(Panel.Visualization, true);
         };
-
-        DataProvider.SetRecipientType<ITelemetryDataRecipient>();
-        DataProvider.SetDataSupply(SerialPortController.Instance);
     }
 }

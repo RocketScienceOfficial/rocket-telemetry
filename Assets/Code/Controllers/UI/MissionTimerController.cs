@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MissionTimerController : MonoBehaviour
 {
-    private const int MISSION_START_TIME = 300;
+    private const int MISSION_START_TIME = 0;
 
     public static MissionTimerController Instance { get; private set; }
 
@@ -47,9 +47,10 @@ public class MissionTimerController : MonoBehaviour
 
     private void UpdateTimer()
     {
-        var hours = Mathf.FloorToInt(_currentTimer / 3600f);
-        var minutes = Mathf.FloorToInt(_currentTimer % 3600f / 60f);
-        var seconds = Mathf.FloorToInt(_currentTimer - hours * 3600f - minutes * 60f);
+        var tmpTimer = Mathf.Abs(_currentTimer);
+        var hours = Mathf.FloorToInt(tmpTimer / 3600f);
+        var minutes = Mathf.FloorToInt(tmpTimer % 3600f / 60f);
+        var seconds = Mathf.FloorToInt(tmpTimer - hours * 3600f - minutes * 60f);
 
         m_MissionTimerText.SetText("T" + (_currentTimer >= 0f ? "+" : "-") + (hours <= 9 ? "0" + hours : hours) + ":" + (minutes <= 9 ? "0" + minutes : minutes) + ":" + (seconds <= 9 ? "0" + seconds : seconds));
     }

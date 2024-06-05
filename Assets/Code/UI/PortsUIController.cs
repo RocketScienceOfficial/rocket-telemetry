@@ -48,7 +48,7 @@ public class PortsUIController : MonoBehaviour
     private void SetupMicrocontroller(string path)
     {
         var obj = Instantiate(m_MicrocontrollerPanel, m_Parent);
-
+        
         obj.transform.Find("Image").GetComponentInChildren<TextMeshProUGUI>().SetText(path);
         obj.transform.Find("Connect Button").GetComponentInChildren<TextMeshProUGUI>().SetText(SerialPortController.Instance.Path == path ? "CONNECTED" : "CONNECT");
         obj.transform.Find("Connect Button").GetComponent<Button>().interactable = SerialPortController.Instance.Path != path;

@@ -66,6 +66,8 @@ public class MapController : MonoBehaviour, IDataRecipient
         {
             m_Tiles[i].texture = textures[i];
         }
+
+        print("Map has been updated!");
     }
 
     private Vector2Int GetTileXY(LatLon ll)

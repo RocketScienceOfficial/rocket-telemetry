@@ -75,8 +75,9 @@ public class SerialPortController : MonoBehaviour
                             latitude = double.Parse(data[6]),
                             longitude = double.Parse(data[7]),
                             altitude = float.Parse(data[8]),
-                            signalStrength = int.Parse(data[9]),
-                            packetLoss = int.Parse(data[10]),
+                            state = int.Parse(data[9]),
+                            signalStrength = int.Parse(data[10]),
+                            packetLoss = int.Parse(data[11]),
                         };
 
                         foreach (var item in _dataRecipients)
@@ -253,6 +254,7 @@ public struct RecipientData
     public double latitude;
     public double longitude;
     public float altitude;
+    public int state;
     public int signalStrength;
     public int packetLoss;
 }

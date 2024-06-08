@@ -21,18 +21,21 @@ public class MapController : MonoBehaviour, IDataRecipient
     [SerializeField] private RawImage[] m_Tiles;
 
     private float _lastUpdateTime;
+    private double _lastLat;
 
     public void OnSetData(RecipientData data)
     {
         m_LatitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(data.latitude)}°");
         m_LongtitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(data.longitude)}°");
 
-        if (Time.time - MAP_UPDATE_RATE > _lastUpdateTime || _lastUpdateTime == 0)
+        if (Time.time - MAP_UPDATE_RATE > _lastUpdateTime || _lastUpdateTime == 0 || (data.latitude != 0 && _lastLat == 0))
         {
             StartCoroutine(GetLocationRoutine(data.latitude, data.longitude));
 
             _lastUpdateTime = Time.time;
         }
+
+        _lastLat = data.latitude;
     }
 
     private IEnumerator GetLocationRoutine(double lat, double lon)

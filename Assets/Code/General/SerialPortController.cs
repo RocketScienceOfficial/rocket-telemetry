@@ -74,7 +74,7 @@ public class SerialPortController : MonoBehaviour
                             batteryPercentage = int.Parse(data[5]),
                             latitude = double.Parse(data[6]),
                             longitude = double.Parse(data[7]),
-                            altitude = float.Parse(data[8]),
+                            altitude = int.Parse(data[8]),
                             state = int.Parse(data[9]),
                             signalStrength = int.Parse(data[10]),
                             packetLoss = int.Parse(data[11]),
@@ -253,7 +253,7 @@ public struct RecipientData
     public int batteryPercentage;
     public double latitude;
     public double longitude;
-    public float altitude;
+    public int altitude;
     public int state;
     public int signalStrength;
     public int packetLoss;

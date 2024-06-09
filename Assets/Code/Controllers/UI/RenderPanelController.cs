@@ -9,7 +9,7 @@ public class RenderPanelController : MonoBehaviour, IDataRecipient
 
     public void OnSetData(RecipientData data)
     {
-        m_SpeedPanel.SetValue(data.velocity * 3.6f, 0f, 1500f);
-        m_AltitudePanel.SetValue(data.altitude / 1000f, 0f, 5f);
+        m_SpeedPanel.SetValue(data.velocity * 3.6f, 0f, 300f);
+        m_AltitudePanel.SetValue(data.altitude, 0f, 200f);
     }
 }

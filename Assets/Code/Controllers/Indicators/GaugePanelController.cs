@@ -14,17 +14,17 @@ public class GaugePanelController : MonoBehaviour
 
     private void Init()
     {
-        _maxFill = transform.Find("Red Background").GetComponent<Image>().fillAmount;
+        if (!_initialized)
+        {
+            _maxFill = transform.Find("Red Background").GetComponent<Image>().fillAmount;
+
+            _initialized = true;
+        }
     }
 
     public void SetValue(float value, float minValue, float maxValue)
     {
-        if (!_initialized)
-        {
-            Init();
-
-            _initialized = true;
-        }
+        Init();
 
         if (value < minValue || value > maxValue)
         {
@@ -33,5 +33,18 @@ public class GaugePanelController : MonoBehaviour
 
         m_ValueText.SetText(MathUtils.NumberOneDecimalPlace(value));
         m_FillImage.fillAmount = (value - minValue) / (maxValue - minValue) * _maxFill;
+    }
+
+    public void SetValue(int value, int minValue, int maxValue)
+    {
+        Init();
+
+        if (value < minValue || value > maxValue)
+        {
+            return;
+        }
+
+        m_ValueText.SetText(value.ToString());
+        m_FillImage.fillAmount = (float)(value - minValue) / (maxValue - minValue) * _maxFill;
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class SignalPanelController : MonoBehaviour, IDataRecipient
 {
     private const float MIN_SIGNAL = -130f;
-    private const float MAX_SIGNAL = -20f;
+    private const float MAX_SIGNAL = -10f;
 
     [SerializeField] private GameObject m_SignalBigPanel;
     [SerializeField] private Image m_SignalFillImage;

@@ -16,5 +16,11 @@ public class FlowManager : MonoBehaviour
             PanelsManager.Instance.DeactiveAllPanels();
             PanelsManager.Instance.SetPanelActive(Panel.Visualization, true);
         };
+
+        SerialPortController.Instance.OnDisconnected += (sender, args) =>
+        {
+            PanelsManager.Instance.DeactiveAllPanels();
+            PanelsManager.Instance.SetPanelActive(Panel.PortSelection, true);
+        };
     }
 }

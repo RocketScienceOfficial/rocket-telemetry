@@ -12,7 +12,8 @@ public class MissionWheelController : MonoBehaviour, IDataRecipient
     [SerializeField] private Image m_Fill;
     [SerializeField] private CheckpointData[] m_Checkpoints;
 
-    private CheckpointData _currentCheckpoint;
+    private int _checkingIndex = 0;
+    private int _currentCheckpointIndex = -1;
 
 
     private void Start()
@@ -22,23 +23,30 @@ public class MissionWheelController : MonoBehaviour, IDataRecipient
 
     private void Update()
     {
-        if (_currentCheckpoint != null)
+        if (_currentCheckpointIndex != -1)
         {
-            if (m_Fill.fillAmount >= _currentCheckpoint.fillThreshold)
-            {
-                _currentCheckpoint.obj.transform.Find("Background").GetComponent<Image>().color = _currentCheckpoint.obj.GetComponent<Image>().color;
-                _currentCheckpoint = null;
-            }
-            else
+            if (m_Fill.fillAmount < m_Checkpoints[_currentCheckpointIndex].fillThreshold)
             {
                 m_Fill.fillAmount += Time.deltaTime * FILL_SPEED;
+            }
+
+            if (_checkingIndex < m_Checkpoints.Length)
+            {
+                var current = m_Checkpoints[_checkingIndex];
+
+                if (m_Fill.fillAmount >= current.fillThreshold)
+                {
+                    current.obj.transform.Find("Background").GetComponent<Image>().color = current.obj.GetComponent<Image>().color;
+
+                    _checkingIndex++;
+                }
             }
         }
     }
 
     public void OnSetData(RecipientData recipient)
     {
-        _currentCheckpoint = m_Checkpoints[recipient.state];
+        _currentCheckpointIndex = Mathf.Clamp(recipient.state, 0, m_Checkpoints.Length - 1);
     }
 
 

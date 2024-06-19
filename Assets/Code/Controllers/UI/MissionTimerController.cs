@@ -20,12 +20,6 @@ public class MissionTimerController : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
-    {
-        m_MissionTimerText.gameObject.SetActive(false);
-        m_MissionNameText.gameObject.SetActive(false);
-    }
-
     private void Update()
     {
         if (_running)
@@ -38,9 +32,6 @@ public class MissionTimerController : MonoBehaviour
 
     public void StartMission()
     {
-        m_MissionTimerText.gameObject.SetActive(true);
-        m_MissionNameText.gameObject.SetActive(true);
-
         _running = true;
         _currentTimer = MISSION_START_TIME;
     }

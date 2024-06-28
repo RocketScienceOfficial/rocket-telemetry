@@ -20,6 +20,9 @@ public class SignalPanelController : MonoBehaviour, IDataRecipient
     private void Start()
     {
         m_SignalBigPanel.SetActive(true);
+        m_SignalFillImage.fillAmount = 0;
+        m_RSSIText.SetText("RSSI: NaN");
+        m_PacketLossText.SetText("Packet Loss: NaN");
     }
 
     private void Update()

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class PortsUIController : MonoBehaviour
 {
+    [SerializeField] private GameObject m_LoadingPanel;
     [SerializeField] private GameObject m_MicrocontrollerPanel;
     [SerializeField] private Transform m_Parent;
     [SerializeField] private Button m_RefreshButton;
@@ -29,12 +30,16 @@ public class PortsUIController : MonoBehaviour
 
     private void FetchPorts()
     {
+        m_LoadingPanel.SetActive(true);
+
         Clear();
-        
+
         foreach (var port in SerialPortController.Instance.ListSerialPorts())
         {
             SetupMicrocontroller(port);
         }
+
+        m_LoadingPanel.SetActive(false);
     }
 
     private void Clear()
@@ -48,10 +53,14 @@ public class PortsUIController : MonoBehaviour
     private void SetupMicrocontroller(string path)
     {
         var obj = Instantiate(m_MicrocontrollerPanel, m_Parent);
-        
+
         obj.transform.Find("Image").GetComponentInChildren<TextMeshProUGUI>().SetText(path);
-        obj.transform.Find("Connect Button").GetComponentInChildren<TextMeshProUGUI>().SetText(SerialPortController.Instance.Path == path ? "CONNECTED" : "CONNECT");
         obj.transform.Find("Connect Button").GetComponent<Button>().interactable = SerialPortController.Instance.Path != path;
-        obj.transform.Find("Connect Button").GetComponent<Button>().onClick.AddListener(() => SerialPortController.Instance.Connect(path));
+        obj.transform.Find("Connect Button").GetComponent<Button>().onClick.AddListener(() =>
+        {
+            m_LoadingPanel.SetActive(true);
+
+            SerialPortController.Instance.Connect(path);
+        });
     }
 }

@@ -8,6 +8,7 @@ public class MissionWheelController : MonoBehaviour, IDataRecipient
 {
     private const float MIN_FILL = 0.346f;
     private const float FILL_SPEED = 0.2f;
+    private const float MAX_DELTA_TIME = 0.05f;
 
     [SerializeField] private Image m_Fill;
     [SerializeField] private CheckpointData[] m_Checkpoints;
@@ -25,7 +26,7 @@ public class MissionWheelController : MonoBehaviour, IDataRecipient
     {
         if (_currentCheckpointIndex != -1)
         {
-            if (m_Fill.fillAmount < m_Checkpoints[_currentCheckpointIndex].fillThreshold)
+            if (m_Fill.fillAmount < m_Checkpoints[_currentCheckpointIndex].fillThreshold && Time.deltaTime < MAX_DELTA_TIME)
             {
                 m_Fill.fillAmount += Time.deltaTime * FILL_SPEED;
             }

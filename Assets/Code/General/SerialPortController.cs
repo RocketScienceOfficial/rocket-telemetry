@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.IO;
-using UnityEngine;
 using System.Threading;
 using System.Linq;
+using UnityEngine;
 
 public class SerialPortController : MonoBehaviour
 {
@@ -19,11 +19,12 @@ public class SerialPortController : MonoBehaviour
     private IDataRecipient[] _dataRecipients;
     private readonly Queue<string> _serialReadQueue = new();
     private readonly object _serialReadQueueLock = new();
-    private bool _closePort;
-    private readonly object _closePortLock = new();
+    private bool _openPort;
+    private readonly object _openPortLock = new();
     private bool _disconnectPort;
     private readonly object _disconnectPortLock = new();
     private SerialPort _currentSerialPort;
+    private Thread _serialOpenThread;
     private Thread _serialReadThread;
 
 
@@ -76,8 +77,9 @@ public class SerialPortController : MonoBehaviour
                             longitude = double.Parse(data[7]),
                             altitude = int.Parse(data[8]),
                             state = int.Parse(data[9]),
-                            signalStrength = int.Parse(data[10]),
-                            packetLoss = int.Parse(data[11]),
+                            controlFlags = int.Parse(data[10]),
+                            signalStrength = int.Parse(data[11]),
+                            packetLoss = int.Parse(data[12]),
                         };
 
                         foreach (var item in _dataRecipients)
@@ -93,13 +95,13 @@ public class SerialPortController : MonoBehaviour
             }
         }
 
-        lock (_closePortLock)
+        lock (_openPortLock)
         {
-            if (_closePort)
+            if (_openPort)
             {
-                BeginDisconnect();
+                EndConnect();
 
-                _closePort = false;
+                _openPort = false;
             }
         }
 
@@ -130,36 +132,49 @@ public class SerialPortController : MonoBehaviour
 
     public void Connect(string port)
     {
-        try
+        _serialOpenThread = new Thread(() =>
         {
-            _currentSerialPort = new SerialPort()
+            try
             {
-                PortName = port,
-                BaudRate = 115200,
-                Parity = Parity.None,
-                DataBits = 8,
-                StopBits = StopBits.One,
-                RtsEnable = true,
-                DtrEnable = true,
-                ReadTimeout = 1000,
-                WriteTimeout = 1000,
-            };
+                _currentSerialPort = new SerialPort()
+                {
+                    PortName = port,
+                    BaudRate = 115200,
+                    Parity = Parity.None,
+                    DataBits = 8,
+                    StopBits = StopBits.One,
+                    RtsEnable = true,
+                    DtrEnable = true,
+                    ReadTimeout = 1000,
+                    WriteTimeout = 1000,
+                };
 
-            _currentSerialPort.Open();
+                _currentSerialPort.Open();
 
-            _serialReadThread = new Thread(SerialReadThread);
-            _serialReadThread.Start();
+                _serialReadThread = new Thread(SerialReadThread);
+                _serialReadThread.Start();
 
-            OnConnected?.Invoke(this, EventArgs.Empty);
+                lock (_openPortLock)
+                {
+                    _openPort = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                print("Could not find serial port: " + ex);
 
-            print("COM Port Connected!");
-        }
-        catch (Exception ex)
-        {
-            print("Could not find serial port: " + ex);
+                BeginDisconnect();
+            }
+        });
 
-            _currentSerialPort = null;
-        }
+        _serialOpenThread.Start();
+    }
+
+    private void EndConnect()
+    {
+        OnConnected?.Invoke(this, EventArgs.Empty);
+
+        print("COM Port Connected!");
     }
 
     private void BeginDisconnect()
@@ -183,7 +198,7 @@ public class SerialPortController : MonoBehaviour
 
     private void EndDisconnect()
     {
-        _serialReadThread.Join();
+        _serialReadThread?.Join();
         _serialReadThread = null;
 
         OnDisconnected?.Invoke(this, EventArgs.Empty);
@@ -211,10 +226,7 @@ public class SerialPortController : MonoBehaviour
             catch (InvalidOperationException) { }
             catch (IOException)
             {
-                lock (_closePortLock)
-                {
-                    _closePort = true;
-                }
+                BeginDisconnect();
 
                 break;
             }
@@ -243,6 +255,17 @@ public interface IDataRecipient
     void OnSetData(RecipientData recipient);
 }
 
+public enum RecipientDataControlFlags
+{
+    Armed = 1 << 0,
+    VBat = 1 << 1,
+    V5 = 1 << 2,
+    V3V3 = 1 << 3,
+    Calibration = 1 << 4,
+    GPS = 1 << 5,
+    SelfTest = 1 << 6,
+}
+
 public struct RecipientData
 {
     public float roll;
@@ -255,6 +278,7 @@ public struct RecipientData
     public double longitude;
     public int altitude;
     public int state;
+    public int controlFlags;
     public int signalStrength;
     public int packetLoss;
 }

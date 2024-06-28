@@ -12,6 +12,17 @@ public class GaugePanelController : MonoBehaviour
     private float _maxFill;
     private bool _initialized;
 
+    private void Start()
+    {
+        if (!_initialized)
+        {
+            m_ValueText.SetText("NaN");
+            m_FillImage.fillAmount = 0;
+
+            Init();
+        }
+    }
+
     private void Init()
     {
         if (!_initialized)

@@ -67,19 +67,20 @@ public class SerialPortController : MonoBehaviour
 
                         var recipentData = new RecipientData
                         {
-                            roll = float.Parse(data[0]),
-                            pitch = float.Parse(data[1]),
-                            yaw = float.Parse(data[2]),
-                            velocity = float.Parse(data[3]),
-                            batteryVoltage = float.Parse(data[4]),
-                            batteryPercentage = int.Parse(data[5]),
-                            latitude = double.Parse(data[6]),
-                            longitude = double.Parse(data[7]),
-                            altitude = int.Parse(data[8]),
-                            state = int.Parse(data[9]),
-                            controlFlags = int.Parse(data[10]),
-                            signalStrength = int.Parse(data[11]),
-                            packetLoss = int.Parse(data[12]),
+                            qw = float.Parse(data[0]),
+                            qx = float.Parse(data[1]),
+                            qy = float.Parse(data[2]),
+                            qz = float.Parse(data[3]),
+                            velocity = float.Parse(data[4]),
+                            batteryVoltage = float.Parse(data[5]),
+                            batteryPercentage = int.Parse(data[6]),
+                            latitude = double.Parse(data[7]),
+                            longitude = double.Parse(data[8]),
+                            altitude = int.Parse(data[9]),
+                            state = int.Parse(data[10]),
+                            controlFlags = int.Parse(data[11]),
+                            signalStrength = int.Parse(data[12]),
+                            packetLoss = int.Parse(data[13]),
                         };
 
                         foreach (var item in _dataRecipients)
@@ -268,9 +269,10 @@ public enum RecipientDataControlFlags
 
 public struct RecipientData
 {
-    public float roll;
-    public float pitch;
-    public float yaw;
+    public float qw;
+    public float qx;
+    public float qy;
+    public float qz;
     public float velocity;
     public float batteryVoltage;
     public int batteryPercentage;

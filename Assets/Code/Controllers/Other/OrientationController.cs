@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class OrientationController : MonoBehaviour, IDataRecipient
 {
+    private Quaternion _baseQuat;
+
+    private void Start()
+    {
+        _baseQuat = Quaternion.Euler(90f, 0f, -90f);
+    }
+
     public void OnSetData(RecipientData data)
     {
-        transform.eulerAngles = new Vector3(data.pitch, data.roll, data.yaw);
+        transform.rotation = _baseQuat * new Quaternion(data.qx, data.qy, data.qz, data.qw);
     }
 }

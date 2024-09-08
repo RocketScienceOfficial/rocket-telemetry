@@ -13,7 +13,7 @@ using UnityEngine.UI;
 public class MapController : MonoBehaviour, IDataRecipient
 {
     private const int MAP_ZOOM = 16;
-    private const float MAP_UPDATE_RATE = 10f;
+    private const float MAP_UPDATE_RATE = 5f;
     private const int MAP_CELL_UI_SIZE = 250;
 
     [SerializeField] private TextMeshProUGUI m_LatitudeText;
@@ -25,7 +25,7 @@ public class MapController : MonoBehaviour, IDataRecipient
     [SerializeField] private GameObject m_NoDataBigPanel;
 
     private float _lastUpdateTime;
-    private Vector2Int _lastCenter;
+    private Vector2Int _currentCenter;
 
     private void Start()
     {
@@ -38,67 +38,36 @@ public class MapController : MonoBehaviour, IDataRecipient
 
     public void OnSetData(RecipientData data)
     {
-        m_LatitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(data.latitude)}°");
-        m_LongtitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(data.longitude)}°");
+        StartCoroutine(UpdateMap(data.latitude, data.longitude));
+    }
 
-        if (data.latitude != 0)
+    private IEnumerator UpdateMap(double lat, double lon)
+    {
+        m_LatitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(lat)}ï¿½");
+        m_LongtitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(lon)}ï¿½");
+
+        if (lat != 0)
         {
-            var pos = GetTileXY(data.latitude, data.longitude);
+            var pos = GetTileXY(lat, lon);
 
-            SetMarkerLocation(pos, data.latitude, data.longitude);
-
-            if ((Mathf.Abs(pos.x - _lastCenter.x) >= 2 || Mathf.Abs(pos.y - _lastCenter.y) >= 2) && (Time.time - MAP_UPDATE_RATE >= _lastUpdateTime || _lastUpdateTime == 0))
+            if ((Mathf.Abs(pos.x - _currentCenter.x) >= 2 || Mathf.Abs(pos.y - _currentCenter.y) >= 2) && (Time.time - MAP_UPDATE_RATE >= _lastUpdateTime || _lastUpdateTime == 0))
             {
-                StartCoroutine(SetSmallTiles(pos));
-                StartCoroutine(SetBigTiles(pos));
+                yield return SetTiles(pos);
 
                 _lastUpdateTime = Time.time;
+                _currentCenter = pos;
             }
 
-            _lastCenter = pos;
+            SetMarkerLocation(_currentCenter, lat, lon);
         }
     }
 
-    private IEnumerator SetSmallTiles(Vector2Int center)
+    private IEnumerator SetTiles(Vector2Int center)
     {
-        var i = 0;
-        var textures = new Texture2D[m_SmallTiles.Length];
-
-        for (int h = -1; h <= 1; h++)
-        {
-            for (int w = -1; w <= 1; w++)
-            {
-                var url = $"https://tile.openstreetmap.org/{MAP_ZOOM}/{center.x + w}/{center.y + h}.png";
-
-                using var map = UnityWebRequestTexture.GetTexture(url);
-
-                yield return map.SendWebRequest();
-
-                if (map.result == UnityWebRequest.Result.ConnectionError || map.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    Debug.LogError("Map error: " + map.error);
-                }
-
-                var content = DownloadHandlerTexture.GetContent(map);
-
-                textures[i++] = content;
-            }
-        }
-
-        for (i = 0; i < textures.Length; i++)
-        {
-            m_SmallTiles[i].texture = textures[i];
-        }
-
-        m_NoDataSmallPanel.SetActive(false);
-
-        print("Small map has been updated!");
-    }
-
-    private IEnumerator SetBigTiles(Vector2Int center)
-    {
-        var i = 0;
-        var textures = new Texture2D[m_BigTiles.Length];
+        var indexSmall = 0;
+        var indexBig = 0;
+        var texturesSmall = new Texture2D[m_SmallTiles.Length];
+        var texturesBig = new Texture2D[m_BigTiles.Length];
 
         for (int h = -1; h <= 1; h++)
         {
@@ -117,18 +86,29 @@ public class MapController : MonoBehaviour, IDataRecipient
 
                 var content = DownloadHandlerTexture.GetContent(map);
 
-                textures[i++] = content;
+                if (w >= -1 && w <= 1)
+                {
+                    texturesSmall[indexSmall++] = content;
+                }
+
+                texturesBig[indexBig++] = content;
             }
         }
 
-        for (i = 0; i < textures.Length; i++)
+        for (var i = 0; i < texturesSmall.Length; i++)
         {
-            m_BigTiles[i].texture = textures[i];
+            m_SmallTiles[i].texture = texturesSmall[i];
         }
 
+        for (var i = 0; i < texturesBig.Length; i++)
+        {
+            m_BigTiles[i].texture = texturesBig[i];
+        }
+
+        m_NoDataSmallPanel.SetActive(false);
         m_NoDataBigPanel.SetActive(false);
 
-        print("Big map has been updated!");
+        print("Maps have been updated!");
     }
 
     private void SetMarkerLocation(Vector2Int center, double lat, double lon)

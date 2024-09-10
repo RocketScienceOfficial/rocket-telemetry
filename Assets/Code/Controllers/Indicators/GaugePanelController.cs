@@ -37,10 +37,7 @@ public class GaugePanelController : MonoBehaviour
     {
         Init();
 
-        if (value < minValue || value > maxValue)
-        {
-            return;
-        }
+        value = Mathf.Clamp(value, minValue, maxValue);
 
         m_ValueText.SetText(MathUtils.NumberOneDecimalPlace(value));
         m_FillImage.fillAmount = (value - minValue) / (maxValue - minValue) * _maxFill;
@@ -50,10 +47,7 @@ public class GaugePanelController : MonoBehaviour
     {
         Init();
 
-        if (value < minValue || value > maxValue)
-        {
-            return;
-        }
+        value = Mathf.Clamp(value, minValue, maxValue);
 
         m_ValueText.SetText(value.ToString());
         m_FillImage.fillAmount = (float)(value - minValue) / (maxValue - minValue) * _maxFill;

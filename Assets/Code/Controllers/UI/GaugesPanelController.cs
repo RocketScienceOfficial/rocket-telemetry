@@ -9,7 +9,7 @@ public class GaugesPanelController : MonoBehaviour, IDataRecipient
 
     public void OnSetData(RecipientData data)
     {
-        m_SpeedPanel.SetValue(data.velocity * 3.6f, 0f, 300f);
-        m_AltitudePanel.SetValue(data.altitude, 0, 200);
+        m_SpeedPanel.SetValue(data.velocity * 3.6f, 0f, 2000f);
+        m_AltitudePanel.SetValue(data.altitude, 0, 2000);
     }
 }

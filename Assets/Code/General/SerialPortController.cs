@@ -262,9 +262,7 @@ public enum RecipientDataControlFlags
     VBat = 1 << 1,
     V5 = 1 << 2,
     V3V3 = 1 << 3,
-    Calibration = 1 << 4,
-    GPS = 1 << 5,
-    SelfTest = 1 << 6,
+    GPS = 1 << 4,
 }
 
 public struct RecipientData

@@ -6,13 +6,16 @@ using UnityEngine.UI;
 
 public class ArmingController : MonoBehaviour, IDataRecipient
 {
-    [SerializeField] private Image m_GpsFixCheckImage;
     [SerializeField] private Color m_ActiveColor;
     [SerializeField] private Color m_InactiveColor;
     [SerializeField] private Button m_ArmButton;
     [SerializeField] private Toggle m_3v3VToggle;
     [SerializeField] private Toggle m_5VToggle;
     [SerializeField] private Toggle m_VBATToggle;
+    [SerializeField] private Image m_IGN1StatusImage;
+    [SerializeField] private Image m_IGN2StatusImage;
+    [SerializeField] private Image m_IGN3StatusImage;
+    [SerializeField] private Image m_IGN4StatusImage;
     [SerializeField] private GameObject m_LoadingPanel;
 
     private bool _armed;
@@ -65,16 +68,16 @@ public class ArmingController : MonoBehaviour, IDataRecipient
 
     private void UpdateFlags(int flags)
     {
-        m_GpsFixCheckImage.color = CheckFlag(flags, RecipientDataControlFlags.GPS) ? m_ActiveColor : m_InactiveColor;
-
         m_ArmButton.GetComponentInChildren<TextMeshProUGUI>().SetText(CheckFlag(flags, RecipientDataControlFlags.Armed) ? "DISARM" : "ARM");
 
-        if ((_armed && CheckFlag(flags, RecipientDataControlFlags.Armed)) || (!_armed && !CheckFlag(flags, RecipientDataControlFlags.Armed)))
-        {
-            m_LoadingPanel.SetActive(false);
-        }
+        SetIGNStatusImage(m_IGN1StatusImage, CheckFlag(flags, RecipientDataControlFlags.IGN1));
+        SetIGNStatusImage(m_IGN2StatusImage, CheckFlag(flags, RecipientDataControlFlags.IGN2));
+        SetIGNStatusImage(m_IGN3StatusImage, CheckFlag(flags, RecipientDataControlFlags.IGN3));
+        SetIGNStatusImage(m_IGN4StatusImage, CheckFlag(flags, RecipientDataControlFlags.IGN4));
 
-        if (m_3v3VToggle.isOn == CheckFlag(flags, RecipientDataControlFlags.V3V3) && m_5VToggle.isOn == CheckFlag(flags, RecipientDataControlFlags.V5) && m_VBATToggle.isOn == CheckFlag(flags, RecipientDataControlFlags.VBat))
+        if (_armed == CheckFlag(flags, RecipientDataControlFlags.Armed) &&
+            m_3v3VToggle.isOn == CheckFlag(flags, RecipientDataControlFlags.V3V3) && m_5VToggle.isOn == CheckFlag(flags, RecipientDataControlFlags.V5) && m_VBATToggle.isOn == CheckFlag(flags, RecipientDataControlFlags.VBat) &&
+            GetIGNImageStatus(m_IGN1StatusImage) == CheckFlag(flags, RecipientDataControlFlags.IGN1) && GetIGNImageStatus(m_IGN2StatusImage) == CheckFlag(flags, RecipientDataControlFlags.IGN2) && GetIGNImageStatus(m_IGN3StatusImage) == CheckFlag(flags, RecipientDataControlFlags.IGN3) && GetIGNImageStatus(m_IGN4StatusImage) == CheckFlag(flags, RecipientDataControlFlags.IGN4))
         {
             m_LoadingPanel.SetActive(false);
         }
@@ -83,5 +86,15 @@ public class ArmingController : MonoBehaviour, IDataRecipient
     private bool CheckFlag(int flags, RecipientDataControlFlags flag)
     {
         return (flags & (int)flag) > 0;
+    }
+
+    private void SetIGNStatusImage(Image img, bool cont)
+    {
+        img.color = cont ? Color.green : Color.red;
+    }
+
+    private bool GetIGNImageStatus(Image img)
+    {
+        return img.color == Color.green;
     }
 }

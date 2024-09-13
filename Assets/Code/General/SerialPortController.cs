@@ -262,7 +262,10 @@ public enum RecipientDataControlFlags
     VBat = 1 << 1,
     V5 = 1 << 2,
     V3V3 = 1 << 3,
-    GPS = 1 << 4,
+    IGN1 = 1 << 4,
+    IGN2 = 1 << 5,
+    IGN3 = 1 << 6,
+    IGN4 = 1 << 7,
 }
 
 public struct RecipientData

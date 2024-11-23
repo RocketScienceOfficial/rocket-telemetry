@@ -9,7 +9,7 @@ public class FlowManager : MonoBehaviour
         PanelsManager.Instance.DeactiveAllPanels();
         PanelsManager.Instance.SetPanelActive(Panel.PortSelection, true);
 
-        SerialPortController.Instance.OnConnected += (sender, args) =>
+        SerialCommunication.Instance.OnConnected += (sender, args) =>
         {
             MissionTimerController.Instance.StartMission();
 
@@ -17,7 +17,7 @@ public class FlowManager : MonoBehaviour
             PanelsManager.Instance.SetPanelActive(Panel.Visualization, true);
         };
 
-        SerialPortController.Instance.OnDisconnected += (sender, args) =>
+        SerialCommunication.Instance.OnDisconnected += (sender, args) =>
         {
             PanelsManager.Instance.DeactiveAllPanels();
             PanelsManager.Instance.SetPanelActive(Panel.PortSelection, true);

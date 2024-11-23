@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MissionWheelController : MonoBehaviour, IDataRecipient
+public class MissionWheelController : MonoBehaviour
 {
     private const float MIN_FILL = 0.346f;
     private const float FILL_SPEED = 0.2f;
@@ -20,6 +20,18 @@ public class MissionWheelController : MonoBehaviour, IDataRecipient
     private void Start()
     {
         m_Fill.fillAmount = MIN_FILL;
+
+        SerialCommunication.Instance.OnRead += (sender, args) =>
+        {
+            var msg = args.Frame;
+
+            if (msg.msgId == DataLinkMessageType.DATALINK_MESSAGE_TELEMETRY_DATA_GCS)
+            {
+                var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
+
+                _currentCheckpointIndex = Mathf.Clamp(payload.state, 0, m_Checkpoints.Length - 1);
+            }
+        };
     }
 
     private void Update()
@@ -43,11 +55,6 @@ public class MissionWheelController : MonoBehaviour, IDataRecipient
                 }
             }
         }
-    }
-
-    public void OnSetData(RecipientData recipient)
-    {
-        _currentCheckpointIndex = Mathf.Clamp(recipient.state, 0, m_Checkpoints.Length - 1);
     }
 
 

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 // REF: https://openweathermap.org/current
 
-public class WindPanelController : MonoBehaviour, IDataRecipient
+public class WindPanelController : MonoBehaviour
 {
     private const float HELLMAN_EXPONENT = 0.2f;
     private const string API_KEY_SAVE_KEY = "WindApiKey";
@@ -38,16 +38,23 @@ public class WindPanelController : MonoBehaviour, IDataRecipient
     private void Start()
     {
         LoadApiKey();
-    }
 
-    public void OnSetData(RecipientData data)
-    {
-        if (!string.IsNullOrEmpty(_apiKey) && data.latitude != 0 && !_updated)
+        SerialCommunication.Instance.OnRead += (sender, args) =>
         {
-            StartCoroutine(GetWindData(data.latitude, data.longitude));
+            var msg = args.Frame;
 
-            _updated = true;
-        }
+            if (msg.msgId == DataLinkMessageType.DATALINK_MESSAGE_TELEMETRY_DATA_GCS)
+            {
+                var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
+
+                if (!string.IsNullOrEmpty(_apiKey) && payload.lat != 0 && !_updated)
+                {
+                    StartCoroutine(GetWindData(payload.lat, payload.lon));
+
+                    _updated = true;
+                }
+            }
+        };
     }
 
     private void LoadApiKey()

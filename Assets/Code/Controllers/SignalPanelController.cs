@@ -4,11 +4,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SignalPanelController : MonoBehaviour, IDataRecipient
+public class SignalPanelController : MonoBehaviour
 {
     private const float MIN_SIGNAL = -130f;
     private const float MAX_SIGNAL = -10f;
-    private const float SIGNAL_LOST_TIMEOUT = 1.0f;
+    private const float SIGNAL_LOST_TIMEOUT = 3.0f;
 
     [SerializeField] private GameObject m_SignalBigPanel;
     [SerializeField] private Image m_SignalFillImage;
@@ -23,6 +23,25 @@ public class SignalPanelController : MonoBehaviour, IDataRecipient
         m_SignalFillImage.fillAmount = 0;
         m_RSSIText.SetText("RSSI: NaN");
         m_PacketLossText.SetText("Packet Loss: NaN");
+
+        SerialCommunication.Instance.OnRead += (sender, args) =>
+        {
+            var msg = args.Frame;
+
+            if (msg.msgId == DataLinkMessageType.DATALINK_MESSAGE_TELEMETRY_DATA_GCS)
+            {
+                var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
+                var signalStrength = -((int)payload.signalStrengthNeg);
+                var packetLoss = (int)payload.packetLossPercentage;
+
+                m_SignalBigPanel.SetActive(false);
+                m_SignalFillImage.fillAmount = (signalStrength - MIN_SIGNAL) / (MAX_SIGNAL - MIN_SIGNAL);
+                m_RSSIText.SetText("RSSI: " + signalStrength + " dbm");
+                m_PacketLossText.SetText("Packet Loss: " + packetLoss + "%");
+
+                _signalTimeout = 0f;
+            }
+        };
     }
 
     private void Update()
@@ -35,15 +54,5 @@ public class SignalPanelController : MonoBehaviour, IDataRecipient
         {
             _signalTimeout += Time.deltaTime;
         }
-    }
-
-    public void OnSetData(RecipientData recipient)
-    {
-        m_SignalBigPanel.SetActive(false);
-        m_SignalFillImage.fillAmount = (recipient.signalStrength - MIN_SIGNAL) / (MAX_SIGNAL - MIN_SIGNAL);
-        m_RSSIText.SetText("RSSI: " + recipient.signalStrength + " dbm");
-        m_PacketLossText.SetText("Packet Loss: " + recipient.packetLoss + "%");
-
-        _signalTimeout = 0f;
     }
 }

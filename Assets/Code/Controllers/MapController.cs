@@ -10,7 +10,7 @@ using UnityEngine.UI;
 // REF: https://operations.osmfoundation.org/policies/tiles/
 // REF: https://en.wikipedia.org/wiki/Web_Mercator_projection
 
-public class MapController : MonoBehaviour, IDataRecipient
+public class MapController : MonoBehaviour
 {
     private const int MAP_ZOOM = 16;
     private const float MAP_UPDATE_RATE = 5f;
@@ -34,17 +34,24 @@ public class MapController : MonoBehaviour, IDataRecipient
 
         m_LatitudeText.SetText("NaN");
         m_LongtitudeText.SetText("NaN");
-    }
 
-    public void OnSetData(RecipientData data)
-    {
-        StartCoroutine(UpdateMap(data.latitude, data.longitude));
+        SerialCommunication.Instance.OnRead += (sender, args) =>
+        {
+            var msg = args.Frame;
+
+            if (msg.msgId == DataLinkMessageType.DATALINK_MESSAGE_TELEMETRY_DATA_GCS)
+            {
+                var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
+
+                StartCoroutine(UpdateMap(payload.lat, payload.lon));
+            }
+        };
     }
 
     private IEnumerator UpdateMap(double lat, double lon)
     {
-        m_LatitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(lat)}�");
-        m_LongtitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(lon)}�");
+        m_LatitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(lat)}");
+        m_LongtitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(lon)}");
 
         if (lat != 0)
         {

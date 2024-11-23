@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO.Ports;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,12 +14,12 @@ public class PortsUIController : MonoBehaviour
 
     private void Start()
     {
-        SerialPortController.Instance.OnConnected += (sender, args) =>
+        SerialCommunication.Instance.OnConnected += (sender, args) =>
         {
             FetchPorts();
         };
 
-        SerialPortController.Instance.OnDisconnected += (sender, args) =>
+        SerialCommunication.Instance.OnDisconnected += (sender, args) =>
         {
             FetchPorts();
         };
@@ -34,7 +35,7 @@ public class PortsUIController : MonoBehaviour
 
         Clear();
 
-        foreach (var port in SerialPortController.Instance.ListSerialPorts())
+        foreach (var port in SerialPort.GetPortNames())
         {
             SetupMicrocontroller(port);
         }
@@ -55,12 +56,12 @@ public class PortsUIController : MonoBehaviour
         var obj = Instantiate(m_MicrocontrollerPanel, m_Parent);
 
         obj.transform.Find("Image").GetComponentInChildren<TextMeshProUGUI>().SetText(path);
-        obj.transform.Find("Connect Button").GetComponent<Button>().interactable = SerialPortController.Instance.Path != path;
+        obj.transform.Find("Connect Button").GetComponent<Button>().interactable = SerialCommunication.Instance.CurrentPortName() != path;
         obj.transform.Find("Connect Button").GetComponent<Button>().onClick.AddListener(() =>
         {
             m_LoadingPanel.SetActive(true);
 
-            SerialPortController.Instance.Connect(path);
+            SerialCommunication.Instance.Connect(path);
         });
     }
 }

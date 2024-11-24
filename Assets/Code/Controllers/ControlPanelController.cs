@@ -88,7 +88,7 @@ public class ControlPanelController : MonoBehaviour
         m_5VToggle.isOn = (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_5V_ENABLED) > 0;
         m_VBATToggle.isOn = (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_VBAT_ENABLED) > 0;
 
-        SynchronizaFlags(newFlags);
+        SynchronizeFlags(newFlags);
 
         m_LoadingPanel.SetActive(false);
     }
@@ -98,7 +98,7 @@ public class ControlPanelController : MonoBehaviour
         img.color = cont ? Color.green : Color.red;
     }
 
-    private void SynchronizaFlags(byte newFlags)
+    private void SynchronizeFlags(byte newFlags)
     {
         _currentFlags = 0;
 

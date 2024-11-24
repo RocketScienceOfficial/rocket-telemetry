@@ -14,8 +14,10 @@ public class SignalPanelController : MonoBehaviour
     [SerializeField] private Image m_SignalFillImage;
     [SerializeField] private TextMeshProUGUI m_RSSIText;
     [SerializeField] private TextMeshProUGUI m_PacketLossText;
+    [SerializeField] private TextMeshProUGUI m_RateText;
 
     private float _signalTimeout;
+    private float _lastPacketTime;
 
     private void Start()
     {
@@ -23,6 +25,7 @@ public class SignalPanelController : MonoBehaviour
         m_SignalFillImage.fillAmount = 0;
         m_RSSIText.SetText("RSSI: NaN");
         m_PacketLossText.SetText("Packet Loss: NaN");
+        m_RateText.SetText("Rate: NaN");
 
         SerialCommunication.Instance.OnRead += (sender, args) =>
         {
@@ -33,13 +36,16 @@ public class SignalPanelController : MonoBehaviour
                 var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
                 var signalStrength = -((int)payload.signalStrengthNeg);
                 var packetLoss = (int)payload.packetLossPercentage;
+                var rate = 1f / (Time.time - _lastPacketTime);
 
                 m_SignalBigPanel.SetActive(false);
                 m_SignalFillImage.fillAmount = (signalStrength - MIN_SIGNAL) / (MAX_SIGNAL - MIN_SIGNAL);
                 m_RSSIText.SetText("RSSI: " + signalStrength + " dbm");
                 m_PacketLossText.SetText("Packet Loss: " + packetLoss + "%");
+                m_RateText.SetText("Rate: " + MathUtils.NumberOneDecimalPlace(rate));
 
                 _signalTimeout = 0f;
+                _lastPacketTime = Time.time;
             }
         };
     }

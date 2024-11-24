@@ -62,9 +62,14 @@ public class ControlPanelController : MonoBehaviour
 
     private void ToggleCurrentFlag(DataLinkFlagsTelemetryResponseControlFlags flag)
     {
-        m_LoadingPanel.SetActive(true);
-
         _currentFlags ^= (byte)flag;
+
+        SendFlagsMessage();
+    }
+
+    private void SendFlagsMessage()
+    {
+        m_LoadingPanel.SetActive(true);
 
         SerialCommunication.Instance.SerialPortWrite(new DataLinkFrame
         {
@@ -83,14 +88,13 @@ public class ControlPanelController : MonoBehaviour
         SetIGNStatusImage(m_IGN3StatusImage, (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_IGN_3) > 0);
         SetIGNStatusImage(m_IGN4StatusImage, (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_IGN_4) > 0);
 
-        m_ArmButton.GetComponentInChildren<TextMeshProUGUI>().SetText((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_ARM_ENABLED) > 0 ? "DISARM" : "ARM");
-        m_3v3VToggle.isOn = (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_3V3_ENABLED) > 0;
-        m_5VToggle.isOn = (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_5V_ENABLED) > 0;
-        m_VBATToggle.isOn = (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_VBAT_ENABLED) > 0;
-
-        SynchronizeFlags(newFlags);
-
-        m_LoadingPanel.SetActive(false);
+        if ((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_ARM_ENABLED) == (_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_ARM_ENABLED) &&
+            (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_3V3_ENABLED) == (_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_3V3_ENABLED) &&
+            (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_5V_ENABLED) == (_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_5V_ENABLED) &&
+            (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_VBAT_ENABLED) == (_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_VBAT_ENABLED))
+        {
+            m_LoadingPanel.SetActive(false);
+        }
     }
 
     private void SetIGNStatusImage(Image img, bool cont)

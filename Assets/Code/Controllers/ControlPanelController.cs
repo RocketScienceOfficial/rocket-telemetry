@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class ControlPanelController : MonoBehaviour
 {
+    private const float MAX_TIME_OF_NEW_FLAGS = 10f;
+
     [SerializeField] private Button m_ArmButton;
     [SerializeField] private Toggle m_3v3VToggle;
     [SerializeField] private Toggle m_5VToggle;
@@ -16,6 +18,7 @@ public class ControlPanelController : MonoBehaviour
     [SerializeField] private Image m_IGN4StatusImage;
     [SerializeField] private GameObject m_LoadingPanel;
 
+    private float _startTimeOfNewFlags;
     private byte _currentFlags;
 
     private void Start()
@@ -63,12 +66,8 @@ public class ControlPanelController : MonoBehaviour
     private void ToggleCurrentFlag(DataLinkFlagsTelemetryResponseControlFlags flag)
     {
         _currentFlags ^= (byte)flag;
+        _startTimeOfNewFlags = Time.time;
 
-        SendFlagsMessage();
-    }
-
-    private void SendFlagsMessage()
-    {
         m_LoadingPanel.SetActive(true);
 
         SerialCommunication.Instance.SerialPortWrite(new DataLinkFrame
@@ -93,7 +92,20 @@ public class ControlPanelController : MonoBehaviour
             (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_5V_ENABLED) == (_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_5V_ENABLED) &&
             (newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_VBAT_ENABLED) == (_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_VBAT_ENABLED))
         {
+            _startTimeOfNewFlags = 0f;
+
             m_LoadingPanel.SetActive(false);
+        }
+        else
+        {
+            if (Time.time - _startTimeOfNewFlags >= MAX_TIME_OF_NEW_FLAGS)
+            {
+                _startTimeOfNewFlags = 0f;
+
+                m_LoadingPanel.SetActive(false);
+
+                SynchronizeFlags(newFlags);
+            }
         }
     }
 
@@ -105,10 +117,14 @@ public class ControlPanelController : MonoBehaviour
     private void SynchronizeFlags(byte newFlags)
     {
         _currentFlags = 0;
+        _currentFlags |= (byte)(((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_ARM_ENABLED) > 0) ? DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_ARM_ENABLED : 0);
+        _currentFlags |= (byte)(((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_3V3_ENABLED) > 0) ? DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_3V3_ENABLED : 0);
+        _currentFlags |= (byte)(((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_5V_ENABLED) > 0) ? DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_5V_ENABLED : 0);
+        _currentFlags |= (byte)(((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_VBAT_ENABLED) > 0) ? DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_VBAT_ENABLED : 0);
 
-        _currentFlags |= (byte)(((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_ARM_ENABLED) > 0) ? (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_ARM_ENABLED : 0);
-        _currentFlags |= (byte)(((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_3V3_ENABLED) > 0) ? (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_3V3_ENABLED : 0);
-        _currentFlags |= (byte)(((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_5V_ENABLED) > 0) ? (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_5V_ENABLED : 0);
-        _currentFlags |= (byte)(((newFlags & (byte)DataLinkFlagsTelemetryDataControlFlags.DATALINK_FLAGS_TELEMETRY_DATA_CONTROL_VBAT_ENABLED) > 0) ? (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_VBAT_ENABLED : 0);
+        m_ArmButton.GetComponentInChildren<TextMeshProUGUI>().SetText((_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_ARM_ENABLED) > 0 ? "DISARM" : "ARM");
+        m_3v3VToggle.isOn = (_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_3V3_ENABLED) > 0;
+        m_5VToggle.isOn = (_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_5V_ENABLED) > 0;
+        m_VBATToggle.isOn = (_currentFlags & (byte)DataLinkFlagsTelemetryResponseControlFlags.DATALINK_FLAGS_TELEMETRY_RESPONSE_CONTROL_VBAT_ENABLED) > 0;
     }
 }

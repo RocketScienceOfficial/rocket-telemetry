@@ -7,8 +7,8 @@
       "dependencies": {},
       "hash": "33acbfeb42d69fb9cb15455f36a4404874ca62d7"
     },
-    "com.rocketscience.communicationutils": {
-      "version": "file:communication-utils-unity",
+    "com.rocketscience.datalink-unity": {
+      "version": "file:datalink-unity",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}

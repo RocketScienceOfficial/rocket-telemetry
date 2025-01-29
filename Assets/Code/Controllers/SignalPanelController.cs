@@ -34,8 +34,8 @@ public class SignalPanelController : MonoBehaviour
             if (msg.msgId == DataLinkMessageType.DATALINK_MESSAGE_TELEMETRY_DATA_GCS)
             {
                 var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
-                var signalStrength = -((int)payload.signalStrengthNeg);
-                var packetLoss = (int)payload.packetLossPercentage;
+                var signalStrength = -payload.signalStrengthNeg;
+                var packetLoss = payload.packetLossPercentage;
                 var rate = 1f / (Time.time - _lastPacketTime);
 
                 m_SignalBigPanel.SetActive(false);

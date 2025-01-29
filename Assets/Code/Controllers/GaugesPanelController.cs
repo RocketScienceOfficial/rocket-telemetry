@@ -17,7 +17,7 @@ public class GaugesPanelController : MonoBehaviour
             {
                 var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
 
-                m_SpeedPanel.SetValue(payload.velocity * 3.6f, 0f, 2000f);
+                m_SpeedPanel.SetValue(payload.velocity, 0, 2000);
                 m_AltitudePanel.SetValue(payload.alt, 0, 2000);
             }
         };

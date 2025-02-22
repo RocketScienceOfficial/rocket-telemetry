@@ -8,7 +8,6 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 // REF: https://openweathermap.org/current
-
 public class WindPanelController : MonoBehaviour
 {
     private const float HELLMAN_EXPONENT = 0.2f;

@@ -25,7 +25,7 @@ public class BatteryPanelController : MonoBehaviour
                 var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
 
                 m_PercentageText.SetText(payload.batteryPercentage + "%");
-                m_VoltageText.SetText((payload.batteryVoltage10 / 10.0f) + "V");
+                m_VoltageText.SetText(MathUtils.NumberTwoDecimalPlaces(payload.batteryVoltage100 / 100.0f) + "V");
                 m_Fill.fillAmount = 1f - payload.batteryPercentage / 100f;
             }
         };

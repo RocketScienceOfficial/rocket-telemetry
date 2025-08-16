@@ -9,6 +9,11 @@ public class GaugesPanelController : MonoBehaviour
 
     private void Start()
     {
+        SerialCommunication.Instance.OnConnected += (sender, args) =>
+        {
+            SetValues(0, 0);
+        };
+
         SerialCommunication.Instance.OnRead += (sender, args) =>
         {
             var msg = args.Frame;
@@ -17,9 +22,14 @@ public class GaugesPanelController : MonoBehaviour
             {
                 var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
 
-                m_SpeedPanel.SetValue(payload.velocity_kmh, 0, 2000);
-                m_AltitudePanel.SetValue(payload.alt, 0, 2000);
+                SetValues(payload.velocity_kmh, payload.alt);
             }
         };
+    }
+
+    private void SetValues(int vel, int alt)
+    {
+        m_SpeedPanel.SetValue(vel, 0, 2000);
+        m_AltitudePanel.SetValue(alt, 0, 2000);
     }
 }

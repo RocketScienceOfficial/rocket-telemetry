@@ -11,8 +11,6 @@ public enum Panel
 
 public class PanelsManager : MonoBehaviour
 {
-    public static PanelsManager Instance { get; private set; }
-
     [SerializeField] private GameObject m_VisualizationPanel;
     [SerializeField] private GameObject m_PortSelectionPanel;
 
@@ -20,8 +18,6 @@ public class PanelsManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
-
         m_Panels = new()
         {
             { Panel.Visualization, m_VisualizationPanel },
@@ -29,12 +25,30 @@ public class PanelsManager : MonoBehaviour
         };
     }
 
-    public void SetPanelActive(Panel panel, bool active)
+    private void Start()
+    {
+        DeactiveAllPanels();
+        SetPanelActive(Panel.PortSelection, true);
+
+        SerialCommunication.Instance.OnConnected += (sender, args) =>
+        {
+            DeactiveAllPanels();
+            SetPanelActive(Panel.Visualization, true);
+        };
+
+        SerialCommunication.Instance.OnDisconnected += (sender, args) =>
+        {
+            DeactiveAllPanels();
+            SetPanelActive(Panel.PortSelection, true);
+        };
+    }
+
+    private void SetPanelActive(Panel panel, bool active)
     {
         m_Panels[panel].SetActive(active);
     }
 
-    public void DeactiveAllPanels()
+    private void DeactiveAllPanels()
     {
         foreach (var panel in Enum.GetValues(typeof(Panel)))
         {

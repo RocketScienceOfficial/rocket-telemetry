@@ -16,7 +16,7 @@ public class GaugePanelController : MonoBehaviour
     {
         if (!_initialized)
         {
-            m_ValueText.SetText("NaN");
+            m_ValueText.SetText("0");
             m_FillImage.fillAmount = 0;
 
             Init();
@@ -39,7 +39,7 @@ public class GaugePanelController : MonoBehaviour
 
         value = Mathf.Clamp(value, minValue, maxValue);
 
-        m_ValueText.SetText(MathUtils.NumberOneDecimalPlace(value));
+        m_ValueText.SetText(string.Format("{0:0.0}", value).Replace(',', '.'));
         m_FillImage.fillAmount = (value - minValue) / (maxValue - minValue) * _maxFill;
     }
 

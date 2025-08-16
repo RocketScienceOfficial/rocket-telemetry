@@ -12,9 +12,10 @@ public class BatteryPanelController : MonoBehaviour
 
     private void Start()
     {
-        m_PercentageText.SetText("NaN %");
-        m_VoltageText.SetText("NaN V");
-        m_Fill.fillAmount = 0;
+        SerialCommunication.Instance.OnConnected += (sender, args) =>
+        {
+            SetData(0, 0);
+        };
 
         SerialCommunication.Instance.OnRead += (sender, args) =>
         {
@@ -24,10 +25,15 @@ public class BatteryPanelController : MonoBehaviour
             {
                 var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
 
-                m_PercentageText.SetText(payload.batteryPercentage + "%");
-                m_VoltageText.SetText(MathUtils.NumberTwoDecimalPlaces(payload.batteryVoltage100 / 100.0f) + "V");
-                m_Fill.fillAmount = 1f - payload.batteryPercentage / 100f;
+                SetData(payload.batteryPercentage, payload.batteryVoltage100 / 100f);
             }
         };
+    }
+
+    private void SetData(int batteryPercentage, float batteryVoltage)
+    {
+        m_PercentageText.SetText(batteryPercentage + "%");
+        m_VoltageText.SetText(string.Format("{0:0.00}", batteryVoltage).Replace(',', '.') + "V");
+        m_Fill.fillAmount = 1f - batteryPercentage / 100f;
     }
 }

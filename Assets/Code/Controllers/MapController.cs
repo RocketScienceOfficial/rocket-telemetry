@@ -14,26 +14,45 @@ public class MapController : MonoBehaviour
 {
     private const int MAP_ZOOM = 16;
     private const float MAP_UPDATE_RATE = 5f;
-    private const int MAP_CELL_UI_SIZE = 250;
 
+    [SerializeField] private GameObject m_NoDataPanel;
+    [SerializeField] private Button m_OpenGoogleMapsButton;
     [SerializeField] private TextMeshProUGUI m_LatitudeText;
     [SerializeField] private TextMeshProUGUI m_LongtitudeText;
-    [SerializeField] private RawImage[] m_SmallTiles;
-    [SerializeField] private RawImage[] m_BigTiles;
+    [SerializeField] private TextMeshProUGUI m_FixTypeText;
+    [SerializeField] private TextMeshProUGUI m_SVCountText;
     [SerializeField] private RectTransform m_RocketMarker;
-    [SerializeField] private GameObject m_NoDataSmallPanel;
-    [SerializeField] private GameObject m_NoDataBigPanel;
+    [SerializeField] private RectTransform m_GCSMarker;
+    [SerializeField] private RawImage[] m_Tiles;
 
     private float _lastUpdateTime;
+    private double _lastLat;
+    private double _lastLon;
     private Vector2Int _currentCenter;
 
     private void Start()
     {
-        m_NoDataSmallPanel.SetActive(true);
-        m_NoDataBigPanel.SetActive(true);
+        m_OpenGoogleMapsButton.onClick.AddListener(() =>
+        {
+            if (_lastLat != 0 && _lastLon != 0)
+            {
+                print($"Opening Google Maps for coordinates: {_lastLat}, {_lastLon}");
 
-        m_LatitudeText.SetText("NaN");
-        m_LongtitudeText.SetText("NaN");
+                Application.OpenURL($"https://maps.google.com?q={_lastLat},{_lastLon}");
+            }
+        });
+
+        SerialCommunication.Instance.OnConnected += (sender, args) =>
+        {
+            m_NoDataPanel.SetActive(true);
+
+            SetTextUI(0, 0, false, 0);
+
+            _lastUpdateTime = 0;
+            _lastLat = 0;
+            _lastLon = 0;
+            _currentCenter = Vector2Int.zero;
+        };
 
         SerialCommunication.Instance.OnRead += (sender, args) =>
         {
@@ -42,18 +61,17 @@ public class MapController : MonoBehaviour
             if (msg.msgId == DataLinkMessageType.DATALINK_MESSAGE_TELEMETRY_DATA_GCS)
             {
                 var payload = BytesConverter.FromBytes<DataLinkFrameTelemetryDataGCS>(msg.payload);
-
-                StartCoroutine(UpdateMap(payload.lat, payload.lon));
+                var fix3d = (payload.gpsData & 0x01) != 0;
+                var svCount = payload.gpsData >> 1;
+                
+                StartCoroutine(UpdateMap(payload.lat / 10000000.0, payload.lon / 10000000.0, payload.gcsLat / 10000000.0, payload.gcsLon / 10000000.0, fix3d, svCount));
             }
         };
     }
 
-    private IEnumerator UpdateMap(double lat, double lon)
+    private IEnumerator UpdateMap(double lat, double lon, double gcsLat, double gcsLon, bool fix3d, int svCount)
     {
-        m_LatitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(lat)}");
-        m_LongtitudeText.SetText($"{MathUtils.NumberSevenDecimalPlaces(lon)}");
-
-        if (lat != 0)
+        if (lat != 0 && lon != 0)
         {
             var pos = GetTileXY(lat, lon);
 
@@ -65,16 +83,18 @@ public class MapController : MonoBehaviour
                 _currentCenter = pos;
             }
 
-            SetMarkerLocation(_currentCenter, lat, lon);
+            SetTextUI(lat, lon, fix3d, svCount);
+            SetMarkerLocation(m_RocketMarker, _currentCenter, lat, lon);
+            SetMarkerLocation(m_GCSMarker, _currentCenter, gcsLat, gcsLon);
+
+            _lastLat = lat;
+            _lastLon = lon;
         }
     }
 
     private IEnumerator SetTiles(Vector2Int center)
     {
-        var indexSmall = 0;
-        var indexBig = 0;
-        var texturesSmall = new Texture2D[m_SmallTiles.Length];
-        var texturesBig = new Texture2D[m_BigTiles.Length];
+        var index = 0;
 
         for (int h = -1; h <= 1; h++)
         {
@@ -93,40 +113,28 @@ public class MapController : MonoBehaviour
 
                 var content = DownloadHandlerTexture.GetContent(map);
 
-                if (w >= -1 && w <= 1)
-                {
-                    texturesSmall[indexSmall++] = content;
-                }
-
-                texturesBig[indexBig++] = content;
+                m_Tiles[index++].texture = content;
             }
         }
 
-        for (var i = 0; i < texturesSmall.Length; i++)
-        {
-            m_SmallTiles[i].texture = texturesSmall[i];
-        }
-
-        for (var i = 0; i < texturesBig.Length; i++)
-        {
-            m_BigTiles[i].texture = texturesBig[i];
-        }
-
-        m_NoDataSmallPanel.SetActive(false);
-        m_NoDataBigPanel.SetActive(false);
+        m_NoDataPanel.SetActive(false);
 
         print("Maps have been updated!");
     }
 
-    private void SetMarkerLocation(Vector2Int center, double lat, double lon)
+    private void SetMarkerLocation(RectTransform marker, Vector2Int center, double lat, double lon)
     {
         var x = GetWebMercatorX(lon) - center.x;
         var y = GetWebMercatorY(lat) - center.y;
+        var cellSize = m_Tiles[0].transform.parent.GetComponent<GridLayoutGroup>().cellSize.x;
 
-        x = (2 * x - 1) * MAP_CELL_UI_SIZE / 2.0;
-        y = (1 - 2 * y) * MAP_CELL_UI_SIZE / 2.0;
+        x = (2 * x - 1) * cellSize / 2.0;
+        y = (1 - 2 * y) * cellSize / 2.0;
 
-        m_RocketMarker.anchoredPosition = new Vector2((float)x, (float)y);
+        var rect = marker.parent.GetComponent<RectTransform>().rect;
+
+        marker.gameObject.SetActive(x >= -rect.width / 2 && x <= rect.width / 2 && y >= -rect.height / 2 && y <= rect.height / 2);
+        marker.anchoredPosition = new Vector2((float)x, (float)y);
 
         print("Marker position has been set!");
     }
@@ -147,5 +155,14 @@ public class MapController : MonoBehaviour
     private double GetWebMercatorY(double lat)
     {
         return (1 - Math.Log(Math.Tan(lat * Math.PI / 180.0) + 1 / Math.Cos(lat * Math.PI / 180.0)) / Math.PI) * Math.Pow(2, MAP_ZOOM - 1);
+    }
+
+    private void SetTextUI(double lat, double lon, bool fix3d, int svCount)
+    {
+        m_LatitudeText.SetText(string.Format("{0:0.0000000}", lat).Replace(',', '.'));
+        m_LongtitudeText.SetText(string.Format("{0:0.0000000}", lon).Replace(',', '.'));
+        m_SVCountText.SetText($"{svCount}");
+        m_FixTypeText.SetText(fix3d ? "3D" : "2D");
+        m_FixTypeText.color = fix3d ? Color.green : Color.red;
     }
 }

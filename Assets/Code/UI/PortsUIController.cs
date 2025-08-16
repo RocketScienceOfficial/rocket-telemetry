@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class PortsUIController : MonoBehaviour
 {
     [SerializeField] private GameObject m_LoadingPanel;
-    [SerializeField] private GameObject m_MicrocontrollerPanel;
+    [SerializeField] private GameObject m_PortSelectPanel;
     [SerializeField] private Transform m_Parent;
     [SerializeField] private Button m_RefreshButton;
 
@@ -53,11 +53,10 @@ public class PortsUIController : MonoBehaviour
 
     private void SetupMicrocontroller(string path)
     {
-        var obj = Instantiate(m_MicrocontrollerPanel, m_Parent);
+        var obj = Instantiate(m_PortSelectPanel, m_Parent);
 
-        obj.transform.Find("Image").GetComponentInChildren<TextMeshProUGUI>().SetText(path);
-        obj.transform.Find("Connect Button").GetComponent<Button>().interactable = SerialCommunication.Instance.CurrentPortName() != path;
-        obj.transform.Find("Connect Button").GetComponent<Button>().onClick.AddListener(() =>
+        obj.GetComponentInChildren<TextMeshProUGUI>().SetText(path);
+        obj.GetComponent<Button>().onClick.AddListener(() =>
         {
             m_LoadingPanel.SetActive(true);
 
